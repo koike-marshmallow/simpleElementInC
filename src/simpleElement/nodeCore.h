@@ -1,4 +1,3 @@
-#define NODE_NONE 0
 #define NODE_ELEMENT 1
 #define NODE_ATTRIBUTE 2
 #define NODE_TEXT 3
@@ -34,14 +33,13 @@ int getNodeType(NODE* node);
 void getNodeName(NODE* node, char buf[], int len);
 void getNodeValue(NODE* node, char buf[], int len);
 
+NODE* getFirstChildNode(NODE* node);
+NODE* getNextSiblingNode(NODE* node);
+
 void appendChildNode(NODE* node, NODE* append);
 
-NODE* getFirstChildNode(NODE* node);
-NODE* getNextSibling(NODE* node);
-
-void clearChildNodeList(NODE* node);
-void destroyChildNodeList(NODE* node);
-void getChildNodeList(NODE* node, NODE* list[], int len);
+int getChildNodeCount(NODE* node);
+int getChildNodeList(NODE* node, NODE* list[], int len);
 
 void printNodeInfo(NODE* node, int indent);
 void traceNodes(NODE* node, int indent);
