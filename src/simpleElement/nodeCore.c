@@ -153,13 +153,14 @@ void insertChildNode(NODE* node, int idx, NODE* insert){
 	i = node->c_childs;
 	while( i > idx ){
 		node->childs[i] = node->childs[i - 1];
+		i--;
 	}
 	node->childs[idx] = insert;
 	node->c_childs++;
 }
 
 
-void deleteChildNode(NODE* node, int idx){
+void removeChildNode(NODE* node, int idx){
 	int i;
 	ASSERT_NULL(node, "deleteChildNode");
 	
@@ -170,6 +171,7 @@ void deleteChildNode(NODE* node, int idx){
 	i = idx;
 	while( i < node->c_childs - 1 ){
 		node->childs[i] = node->childs[i + 1];
+		i++;
 	}
 	node->c_childs--;
 }			
