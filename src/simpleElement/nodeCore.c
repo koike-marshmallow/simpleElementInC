@@ -4,6 +4,8 @@
 #include "nodeCore.h"
 
 #define ASSERT_NULL(p, fnc) ifassert((p == NULL), fnc, "値がNULLです");
+#define ASSERT_CHILD_HEAD(p, fnc) ifassert((p->child == NULL), fnc, "childヘッドが見つかりません");
+#define ASSERT_NONE (p, fnc) ifassert(( p->node_type == NODE_NONE ), fnc, "空ノードです");
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
 
 
@@ -46,16 +48,26 @@ NODE* createNode(int type){
 void destroyNode(NODE* node){
 	nullCheck(node, "destroyNode", "値がNULLです");
 
+	if( node->child != NULL ){
+		destroyNode(node->child);
+	}
 	initNode(node, 0);
 	free(node);
 }
 
-void recursiveDestroyNode(NODE* node){
+void rdestroyNode(NODE* node){
 	int i;
-	nullCheck(node, "recursiveDestoryNode", "値がNULLです");
+	NODE* np, next_np;
+	ASSERT_NULL(node, "rdestroyNode");
 	
-	for( i=0; i<node->c_childs; i++){
-		recursiveDestroyNode(getChildNode(node, i));
+	/*子ノードを削除*/
+	if( node->child != NULL ){
+		np = node->child;
+		while( np != NULL ){
+			next_np = np->sibling;
+			rdestroyNode(np);
+			np = next_np;
+		}
 	}
 	
 	destroyNode(node);
@@ -64,14 +76,17 @@ void recursiveDestroyNode(NODE* node){
 
 void initNode(NODE* node, int type){
 	int i;
-
-	nullCheck(node, "initNode", "値がNULLです");
+	ASSERT_NULL(node, "initNode");
 
 	node->node_type = type;
 	memset(node->node_name, 0, NODE_NAME_LEN);
 	memset(node->node_value, 0, NODE_VALUE_LEN);
-	for( i=0; i<MAX_CHILDS_LEN; i++) node->childs[i] = NULL;
-	node->c_childs = 0;
+	node->child = NULL;
+	node->sibling = NULL;
+	
+	if( type != NODE_NONE ){
+		node->child = createNode(NODE_NONE);
+	}
 }
 
 
@@ -126,73 +141,45 @@ void getNodeValue(NODE* node, char buf[], int len){
 }
 
 
+NODE* getFirstChildNode(NODE* node){
+	NODE* p;
+	ASSERT_NULL(node, "getFirstChildNode");
+	
+	p = node->child;
+	while( p != NULL && p->node_type == NODE_NONE ) p = p->sibling;
+	return p;
+}
+
+
+NODE* getNextSibling(NODE* node){
+	NODE* p;
+	ASSERT_NULL(node, "getNextSibling");
+	
+	p = node->sibling;
+	while( p != NULL && p->node_type == NODE_NONE ) p = p->sibling;
+	return p;
+}
+
+
 void appendChildNode(NODE* node, NODE* append){
-	nullCheck(node, "appendChildNode", "値がNULLです");
+	NODE *np, *pre_np;
+	ASSERT_NULL(node, "appendChildNode");
+	ASSERT_CHILD_HEAD(node, "appendChildNode");
 	
-	if( node->c_childs >= MAX_CHILDS_LEN ){
-		fnerror("appendChildNode", "子ノードリストがいっぱいです");
+	pre_np = node->child;
+	np = pre_np->sibling;
+	while( np != NULL ){
+		pre_np = np;
+		np = np->sibling;
 	}
 	
-	node->childs[node->c_childs] = append;
-	node->c_childs++;
+	pre_np->sibling = append;
+	append->sibling = NULL;
 }
 
 
-
-void insertChildNode(NODE* node, int idx, NODE* insert){
-	int i;
-	ASSERT_NULL(node, "insertChildNode");
-	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("getChildNode", "子ノードがありません");
-	}
-	if( node->c_childs >= MAX_CHILDS_LEN ){
-		fnerror("insertChildNode", "子ノードリストがいっぱいです");
-	}
-	
-	i = node->c_childs;
-	while( i > idx ){
-		node->childs[i] = node->childs[i - 1];
-		i--;
-	}
-	node->childs[idx] = insert;
-	node->c_childs++;
-}
-
-
-void removeChildNode(NODE* node, int idx){
-	int i;
-	ASSERT_NULL(node, "deleteChildNode");
-	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("deleteChildNode", "子ノードがありません");
-	}
-	
-	i = idx;
-	while( i < node->c_childs - 1 ){
-		node->childs[i] = node->childs[i + 1];
-		i++;
-	}
-	node->c_childs--;
-}			
-
-
-NODE* getChildNode(NODE* node, int idx){
-	nullCheck(node, "getChildNode", "値がNULLです");
-	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("getChildNode", "子ノードがありません");
-	}
-	
-	return node->childs[idx];
-}
-
-
-int getChildNodeCount(NODE* node){
-	nullCheck(node, "getChildNodeCount", "値がNULLです");
-	
-	return node->c_childs;
-}
+void 
+		
 
 
 void clearChildNodeList(NODE* node){

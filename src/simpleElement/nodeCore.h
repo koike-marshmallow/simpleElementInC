@@ -1,3 +1,4 @@
+#define NODE_NONE 0
 #define NODE_ELEMENT 1
 #define NODE_ATTRIBUTE 2
 #define NODE_TEXT 3
@@ -12,8 +13,8 @@ struct s_node {
 	int node_type;
 	char node_name[NODE_NAME_LEN];
 	char node_value[NODE_VALUE_LEN];
-	struct s_node* childs[MAX_CHILDS_LEN];
-	int c_childs;
+	struct s_node* child;
+	struct s_node* sibling;
 };
 
 typedef struct s_node NODE;
@@ -34,10 +35,9 @@ void getNodeName(NODE* node, char buf[], int len);
 void getNodeValue(NODE* node, char buf[], int len);
 
 void appendChildNode(NODE* node, NODE* append);
-void insertChildNode(NODE* node, int idx, NODE* insert);
-void removeChildNode(NODE* node, int idx);
-NODE* getChildNode(NODE* node, int idx);
-int getChildNodeCount(NODE* node);
+
+NODE* getFirstChildNode(NODE* node);
+NODE* getNextSibling(NODE* node);
 
 void clearChildNodeList(NODE* node);
 void destroyChildNodeList(NODE* node);
