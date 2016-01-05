@@ -16,11 +16,10 @@ int main(void){
 	addText(test, "これはテキストです");
 	appendChildNode(root, test);
 	
-
-	
 	traceNodes(root, 0);
+	
 	deleteAttribute(test, "これが属性");
-	clearText(test);
+	/*clearText(test);*/
 	
 	cnt = getAttributeNameList(test, (char*)namelist, 8, 64);
 	for( i=0; i<cnt; i++){
@@ -33,7 +32,7 @@ int main(void){
 	
 	traceNodes(root, 0);
 	
-	recursiveDestroyNode(root);
+	rdestroyNode(root);
 	
 	return 0;
 }

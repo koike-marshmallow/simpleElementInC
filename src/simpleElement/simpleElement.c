@@ -52,7 +52,7 @@ void destroyElement(NODE* element){
 
 
 void recursiveDestroyElement(NODE* element){
-	recursiveDestroyNode(element);
+	rdestroyNode(element);
 }
 
 
@@ -68,7 +68,7 @@ void clearElement(NODE* element){
 }
 
 
-void addAttribute(NODE* element, char* name, char* value){
+NODE* addAttribute(NODE* element, char* name, char* value){
 	NODE* new_attr;
 	
 	new_attr = createNode(NODE_ATTRIBUTE);
@@ -76,54 +76,53 @@ void addAttribute(NODE* element, char* name, char* value){
 	setNodeValue(new_attr, value);
 	
 	appendChildNode(element, new_attr);
+	
+	return new_attr;
 }
 
 
 void deleteAttribute(NODE* element, char* name){
-	int child_len, i;
-	char buffer[BUF_SHORT_LEN];
-	NODE* child;
+	NODE *itr, *next_itr;
 	
-	child_len = getChildNodeCount(element);
-	for( i=(child_len - 1); i>=0; i--){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_ATTRIBUTE ){
-			getNodeName(child, buffer, BUF_SHORT_LEN);
-			
-			if( strcmp(buffer, name) == 0 ){
-				removeChildNode(element, i);
-			}
+	itr = getFirstChildNode(element);
+	while( itr != NULL ){
+		next_itr = getNextSiblingNode(itr);
+		if( strcmp(getNodeName(itr, NULL, 0), name) == 0 ){
+			removeChildNode(element, itr);
+			destroyNode(itr);
 		}
+		itr = next_itr;
 	}
 }
 
 
 void clearAttribute(NODE* element){
-	int child_len, i;
-	NODE* child;
+	NODE *itr, *next_itr;
 	
-	child_len = getChildNodeCount(element);
-	for( i=(child_len - 1); i>=0; i--){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_ATTRIBUTE ){
-			removeChildNode(element, i);
+	itr = getFirstChildNode(element);
+	while( itr != NULL ){
+		next_itr = getNextSiblingNode(itr);
+		if( getNodeType(itr) == NODE_ATTRIBUTE ){
+			removeChildNode(element, itr);
+			destroyNode(itr);
 		}
+		itr = next_itr;
 	}
 }
 
 
 int getAttributeNameList(NODE* element, char* list, int l_size, int b_size){
-	int child_len, i, cnt;
+	int cnt;
 	char* list_pt;
-	NODE* child;
+	NODE* itr;
 	
-	child_len = getChildNodeCount(element);
 	list_pt = list;
 	cnt = 0;
-	for( i=0; (i < child_len) && (cnt < l_size); i++){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_ATTRIBUTE ){
-			getNodeName(child, list_pt, b_size);
+	for( itr=getFirstChildNode(element); 
+	(itr != NULL) && (cnt < l_size);
+	itr = getNextSiblingNode(itr)){
+		if( getNodeType(itr) == NODE_ATTRIBUTE ){
+			getNodeName(itr, list_pt, b_size);
 			list_pt += b_size;
 			cnt++;
 		}
@@ -133,61 +132,61 @@ int getAttributeNameList(NODE* element, char* list, int l_size, int b_size){
 }
 
 
-void getAttributeValue(NODE* element, char* name, char buf[], int len){
-	int child_len, i;
-	char buffer[BUF_SHORT_LEN];
-	NODE* child;
+char* getAttributeValue(NODE* element, char* name, char* buf, int len){
+	NODE* itr;
 	
-	child_len = getChildNodeCount(element);
-	for( i=(child_len - 1); i>=0; i--){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_ATTRIBUTE ){
-			getNodeName(child, buffer, BUF_SHORT_LEN);
-			
-			if( strcmp(buffer, name) == 0 ){
-				getNodeValue(child, buf, len);
+	for( itr = getFirstChildNode(element);
+	itr != NULL;
+	itr = getNextSiblingNode(itr) ){
+		if( getNodeType(itr) == NODE_ATTRIBUTE ){
+			if( strcmp(getNodeName(itr, NULL, 0), name) == 0 ){
+				if( buf != NULL ){
+					getNodeValue(itr, buf, len);
+				}
+				return getNodeName(itr, NULL, 0);
 			}
 		}
 	}
 }
 		
 	
-void addText(NODE* element, char* text){
+NODE* addText(NODE* element, char* text){
 	NODE* new_text;
 	
 	new_text = createNode(NODE_TEXT);
 	setNodeValue(new_text, text);
 	
 	appendChildNode(element, new_text);
+	
+	return new_text;
 }
 
 
-void getText(NODE* element, char buf[], int len){
+void getText(NODE* element, char* buf, int len){
 	int child_len, i;
-	char buffer[BUF_LONG_LEN];
-	NODE* child;
+	NODE* itr;
 	
 	memset(buf, 0, len);
-	child_len = getChildNodeCount(element);
-	for( i=0; (i < child_len) && (strlen(buf) < len - 1); i++){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_TEXT ){
-			getNodeValue(child, buffer, BUF_LONG_LEN);
-			strncat(buf, buffer, len - strlen(buf) - 1);
+	for( itr = getFirstChildNode(element);
+	(itr != NULL) && (strlen(buf) < len - 1);
+	itr = getNextSiblingNode(itr) ){
+		if( getNodeType(itr) == NODE_TEXT ){
+			strncat(buf, getNodeValue(itr, NULL, 0), len - strlen(buf) - 1);
 		}
 	}
 }
 
 
 void clearText(NODE* element){
-	int child_len, i;
-	NODE* child;
+	NODE *itr, *next_itr;
 	
-	child_len = getChildNodeCount(element);
-	for( i=(child_len - 1); i>=0; i--){
-		child = getChildNode(element, i);
-		if( getNodeType(child) == NODE_TEXT ){
-			removeChildNode(element, i);
+	itr = getFirstChildNode(element);
+	while( itr != NULL ){
+		next_itr = getNextSiblingNode(itr);
+		if( getNodeType(itr) == NODE_TEXT ){
+			removeChildNode(element, itr);
+			destroyNode(itr);
 		}
+		itr = next_itr;
 	}
 }

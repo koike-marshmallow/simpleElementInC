@@ -30,14 +30,14 @@ void seNodeType(NODE* node, int typec);
 void setNodeName(NODE* node, char* name);
 void setNodeValue(NODE* node, char* value);
 int getNodeType(NODE* node);
-void getNodeName(NODE* node, char buf[], int len);
-void getNodeValue(NODE* node, char buf[], int len);
+char* getNodeName(NODE* node, char* buf, int len);
+char* getNodeValue(NODE* node, char* buf, int len);
 
 NODE* getFirstChildNode(NODE* node);
 NODE* getNextSiblingNode(NODE* node);
 
-/*insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
-/*removeLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
+/*void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
+/*NODE* removeLinkedNodeSibling(NODE **pre_np);*/
 void appendChildNode(NODE* node, NODE* append);
 void insertChildNode(NODE* node, NODE* new_node, NODE* pos);
 void removeChildNode(NODE* node, NODE* pos);
