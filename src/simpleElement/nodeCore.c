@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nodeCore.h"
+#include "../error/error.h"
 
 #define ASSERT_NULL(p, fnc) ifassert((p == NULL), fnc, "値がNULLです");
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
