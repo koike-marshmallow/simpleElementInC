@@ -6,14 +6,14 @@ void recursiveDestroyElement(NODE* element);
 void initElement(NODE* element);
 void clearElement(NODE* element);
 
-void addAttribute(NODE* element, char* name, char* value);
+NODE* addAttribute(NODE* element, char* name, char* value);
 void deleteAttribute(NODE* element, char* name);
 void clearAttribute(NODE* element);
 int getAttributeNameList(NODE* element, char* list, int l_size, int b_size);
-void getAttributeValue(NODE* element, char* name, char buf[], int len);
+char* getAttributeValue(NODE* element, char* name, char* buf, int len);
 
-void addText(NODE* element, char* text);
-void getText(NODE* element, char buf[], int len);
+NODE* addText(NODE* element, char* text);
+char* getText(NODE* element, char* buf, int len);
 void clearText(NODE* element);
 
 //void appendChildNode(NODE* node, NODE* append);

@@ -12,8 +12,8 @@ struct s_node {
 	int node_type;
 	char node_name[NODE_NAME_LEN];
 	char node_value[NODE_VALUE_LEN];
-	struct s_node* childs[MAX_CHILDS_LEN];
-	int c_childs;
+	struct s_node* child;
+	struct s_node* sibling;
 };
 
 typedef struct s_node NODE;
@@ -30,18 +30,21 @@ void seNodeType(NODE* node, int typec);
 void setNodeName(NODE* node, char* name);
 void setNodeValue(NODE* node, char* value);
 int getNodeType(NODE* node);
-void getNodeName(NODE* node, char buf[], int len);
-void getNodeValue(NODE* node, char buf[], int len);
+char* getNodeName(NODE* node, char* buf, int len);
+char* getNodeValue(NODE* node, char* buf, int len);
 
+NODE* getFirstChildNode(NODE* node);
+NODE* getNextSiblingNode(NODE* node);
+
+/*void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
+/*NODE* removeLinkedNodeSibling(NODE **pre_np);*/
 void appendChildNode(NODE* node, NODE* append);
-void insertChildNode(NODE* node, int idx, NODE* insert);
-void removeChildNode(NODE* node, int idx);
-NODE* getChildNode(NODE* node, int idx);
-int getChildNodeCount(NODE* node);
+void insertChildNode(NODE* node, NODE* new_node, NODE* pos);
+void removeChildNode(NODE* node, NODE* pos);
 
-void clearChildNodeList(NODE* node);
-void destroyChildNodeList(NODE* node);
-void getChildNodeList(NODE* node, NODE* list[], int len);
+int getChildNodeIndex(NODE* node, NODE* target);
+int getChildNodeCount(NODE* node);
+int getChildNodeList(NODE* node, NODE* list[], int len);
 
 void printNodeInfo(NODE* node, int indent);
 void traceNodes(NODE* node, int indent);

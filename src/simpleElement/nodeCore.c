@@ -7,30 +7,6 @@
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
 
 
-/*
-NODE* createNode(int type);
-void destroyNode(NODE* node);
-
-void initNode(NODE* node, int type);
-void clearNode(NODE* node);
-
-void setType(NODE* node, int typec);
-void setName(NODE* node, char* name);
-void setValue(NODE* node, char* value);
-int getType(NODE* node);
-void getName(NODE* node, char buf[], int len);
-void getValue(NODE* node, char buf[], int len);
-
-void appendChildNode(NODE* node, NODE* append);
-NODE* getChildNode(NODE* node, int idx);
-int getChildNodeCount(NODE* node);
-
-void clearChildNodeList(NODE* node);
-void destroyChildNodeList(NODE* node);
-void getChildeNodeList(NODE* node, NODE* list[], int len);
-*/
-
-
 NODE* createNode(int type){
 	NODE* new_node;
 	
@@ -44,18 +20,25 @@ NODE* createNode(int type){
 
 
 void destroyNode(NODE* node){
-	nullCheck(node, "destroyNode", "値がNULLです");
+	ASSERT_NULL(node, "destroyNode");
 
 	initNode(node, 0);
 	free(node);
 }
 
-void recursiveDestroyNode(NODE* node){
+void rdestroyNode(NODE* node){
 	int i;
-	nullCheck(node, "recursiveDestoryNode", "値がNULLです");
+	NODE *np, *next_np;
+	ASSERT_NULL(node, "rdestroyNode");
 	
-	for( i=0; i<node->c_childs; i++){
-		recursiveDestroyNode(getChildNode(node, i));
+	/*子ノードを削除*/
+	if( node->child != NULL ){
+		np = node->child;
+		while( np != NULL ){
+			next_np = np->sibling;
+			rdestroyNode(np);
+			np = next_np;
+		}
 	}
 	
 	destroyNode(node);
@@ -64,23 +47,21 @@ void recursiveDestroyNode(NODE* node){
 
 void initNode(NODE* node, int type){
 	int i;
-
-	nullCheck(node, "initNode", "値がNULLです");
+	ASSERT_NULL(node, "initNode");
 
 	node->node_type = type;
 	memset(node->node_name, 0, NODE_NAME_LEN);
 	memset(node->node_value, 0, NODE_VALUE_LEN);
-	for( i=0; i<MAX_CHILDS_LEN; i++) node->childs[i] = NULL;
-	node->c_childs = 0;
+	node->child = NULL;
+	node->sibling = NULL;
 }
 
 
 void clearNode(NODE* node){
-	nullCheck(node, "clearNode", "値がNULLです");
+	ASSERT_NULL(node, "clearNode");
 
 	setNodeName(node, "");
 	setNodeValue(node, "");
-	clearChildNodeList(node);
 }
 
 
@@ -112,104 +93,129 @@ int getNodeType(NODE* node){
 }
 
 
-void getNodeName(NODE* node, char buf[], int len){
+char* getNodeName(NODE* node, char* buf, int len){
 	nullCheck(node, "getNodeName", "値がNULLです");
 	
-	strncpy(buf, node->node_name, len - 1);
+	if( buf != NULL ){
+		strncpy(buf, node->node_name, len - 1);
+	}
+	return node->node_name;
 }
 
 
-void getNodeValue(NODE* node, char buf[], int len){
+char* getNodeValue(NODE* node, char* buf, int len){
 	nullCheck(node, "getNodeValue", "値がNULLです");
 	
-	strncpy(buf, node->node_value, len - 1);
+	if( buf != NULL ){
+		strncpy(buf, node->node_value, len - 1);
+	}
+	return node->node_value;
 }
+
+
+NODE* getFirstChildNode(NODE* node){
+	ASSERT_NULL(node, "getFirstChildNode");
+	
+	return node->child;
+}
+
+
+NODE* getNextSiblingNode(NODE* node){
+	ASSERT_NULL(node, "getNextSibling");
+	
+	return node->sibling;
+}
+
+
+void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node){
+	NODE *tmp;
+	tmp = *pre_np;
+	*pre_np = new_node;
+	new_node->sibling = tmp;
+}
+
+
+NODE* removeLinkedNodeSibling(NODE **pre_np){
+	NODE *tmp;
+	tmp = *pre_np;
+	*pre_np = tmp->sibling;
+	tmp->sibling = NULL;
+}	
 
 
 void appendChildNode(NODE* node, NODE* append){
-	nullCheck(node, "appendChildNode", "値がNULLです");
+	NODE **target;
+	ASSERT_NULL(node, "appendChildNode");
 	
-	if( node->c_childs >= MAX_CHILDS_LEN ){
-		fnerror("appendChildNode", "子ノードリストがいっぱいです");
+	target = &(node->child);
+	while( *target != NULL ){
+		target = &((*target)->sibling);
 	}
 	
-	node->childs[node->c_childs] = append;
-	node->c_childs++;
+	*target = append;
 }
 
 
+void insertChildNode(NODE* node, NODE* new_node, NODE* pos){
+	NODE **target;
+	ASSERT_NULL(node, "insertChildNode");
+	ASSERT_NULL(new_node, "insertChildNode");
+	ifassert((pos == NULL), "insertChildNode", "posがNULLです");
+	
+	target = &(node->child);
+	while( *target != NULL ){
+		if( *target == pos ){
+			insertLinkedNodeSibling(target, new_node);
+			break;
+		}
+		target = &((*target)->sibling);
+	}
+}
 
-void insertChildNode(NODE* node, int idx, NODE* insert){
-	int i;
+
+void removeChildNode(NODE* node, NODE* pos){
+	NODE **pre;
 	ASSERT_NULL(node, "insertChildNode");
 	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("getChildNode", "子ノードがありません");
+	pre = &(node->child);
+	while( *pre != NULL ){
+		if( *pre == pos ){
+			removeLinkedNodeSibling(pre);
+			break;
+		}
+		pre = &((*pre)->sibling);
 	}
-	if( node->c_childs >= MAX_CHILDS_LEN ){
-		fnerror("insertChildNode", "子ノードリストがいっぱいです");
-	}
-	
-	i = node->c_childs;
-	while( i > idx ){
-		node->childs[i] = node->childs[i - 1];
-		i--;
-	}
-	node->childs[idx] = insert;
-	node->c_childs++;
 }
-
-
-void removeChildNode(NODE* node, int idx){
-	int i;
-	ASSERT_NULL(node, "deleteChildNode");
-	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("deleteChildNode", "子ノードがありません");
-	}
-	
-	i = idx;
-	while( i < node->c_childs - 1 ){
-		node->childs[i] = node->childs[i + 1];
-		i++;
-	}
-	node->c_childs--;
-}			
-
-
-NODE* getChildNode(NODE* node, int idx){
-	nullCheck(node, "getChildNode", "値がNULLです");
-	
-	if( idx < 0 || idx >= node->c_childs ){
-		fnerror("getChildNode", "子ノードがありません");
-	}
-	
-	return node->childs[idx];
-}
-
+		
 
 int getChildNodeCount(NODE* node){
-	nullCheck(node, "getChildNodeCount", "値がNULLです");
+	int cnt;
+	NODE* np;
+	ASSERT_NULL(node, "getChildNodeCount");
 	
-	return node->c_childs;
-}
-
-
-void clearChildNodeList(NODE* node){
-	nullCheck(node, "clearChildNodeList", "値がNULLです");
-	
-	node->c_childs = 0;
-}
-
-void getChildNodeList(NODE* node, NODE* list[], int len){
-	int i;
-	nullCheck(node, "getChildNodeList", "値がNULLです");
-	
-	i = 0;
-	while( i < node->c_childs && i < len ){
-		list[i] = node->childs[i];
-		i++;
+	np = node->child;
+	while( np != NULL ){
+		cnt++;
+		np = np->sibling;
 	}
+	
+	return cnt;
+}
+	
+
+int getChildNodeList(NODE* node, NODE* list[], int len){
+	int cnt = 0;
+	NODE* np;
+	ASSERT_NULL(node, "getChildNodeList");
+	
+	np = node->child;
+	while( np != NULL ){
+		list[cnt] = np;
+		cnt++;
+		np = np->sibling;
+	}
+	
+	return cnt;
 }
 	
 	
@@ -227,13 +233,15 @@ void printNodeInfo(NODE* node, int indent){
 	
 	
 void traceNodes(NODE* node, int indent){
-	int i, cc;
-	nullCheck(node, "traceNodes", "値がnullです");
+	NODE* np;
+	ASSERT_NULL(node, "traceNodes");
 	
 	printNodeInfo(node, indent);
-	cc = getChildNodeCount(node);
-	for( i=0; i<cc; i++){
-		traceNodes(getChildNode(node, i), indent + 2);
+	
+	np = getFirstChildNode(node); /* np = node->child */
+	while( np != NULL ){
+		traceNodes(np, indent + 2);
+		np = getNextSiblingNode(np); /* np = np->sibling */
 	}
 }
 	
