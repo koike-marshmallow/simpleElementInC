@@ -4,33 +4,7 @@
 #include "nodeCore.h"
 
 #define ASSERT_NULL(p, fnc) ifassert((p == NULL), fnc, "値がNULLです");
-#define ASSERT_CHILD_HEAD(p, fnc) ifassert((p->child == NULL), fnc, "childヘッドが見つかりません");
-#define ASSERT_NONE (p, fnc) ifassert(( p->node_type == NODE_NONE ), fnc, "空ノードです");
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
-
-
-/*
-NODE* createNode(int type);
-void destroyNode(NODE* node);
-
-void initNode(NODE* node, int type);
-void clearNode(NODE* node);
-
-void setType(NODE* node, int typec);
-void setName(NODE* node, char* name);
-void setValue(NODE* node, char* value);
-int getType(NODE* node);
-void getName(NODE* node, char buf[], int len);
-void getValue(NODE* node, char buf[], int len);
-
-void appendChildNode(NODE* node, NODE* append);
-NODE* getChildNode(NODE* node, int idx);
-int getChildNodeCount(NODE* node);
-
-void clearChildNodeList(NODE* node);
-void destroyChildNodeList(NODE* node);
-void getChildeNodeList(NODE* node, NODE* list[], int len);
-*/
 
 
 NODE* createNode(int type){
@@ -84,7 +58,7 @@ void initNode(NODE* node, int type){
 
 
 void clearNode(NODE* node){
-	nullCheck(node, "clearNode", "値がNULLです");
+	ASSERT_NULL(node, "clearNode");
 
 	setNodeName(node, "");
 	setNodeValue(node, "");
@@ -147,6 +121,14 @@ NODE* getNextSiblingNode(NODE* node){
 }
 
 
+void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node){
+	NODE *tmp;
+	tmp = *pre_np;
+	*pre_np = new_node;
+	new_node->sibling = tmp;
+}
+
+
 void appendChildNode(NODE* node, NODE* append){
 	NODE **target;
 	ASSERT_NULL(node, "appendChildNode");
@@ -159,6 +141,28 @@ void appendChildNode(NODE* node, NODE* append){
 	*target = append;
 }
 
+
+void insertChildNode(NODE* node, NODE* new_node, NODE* pos){
+	NODE **target;
+	ASSERT_NULL(node, "insertChildNode");
+	ASSERT_NULL(new_node, "insertChildNode");
+	ifassert((pos == NULL), "insertChildNode", "posがNULLです");
+	
+	target = &(node->child);
+	while( *target != NULL ){
+		if( *target == pos ){
+			insertLinkedNodeSibling(target, new_node);
+			break;
+		}
+	}
+}
+
+
+void removeChildNode(NODE* node, NODE* pos){
+	NODE **target;
+	ASSERT_NULL(node, "insertChildNode");
+	
+		
 
 int getChildNodeCount(NODE* node){
 	int cnt;

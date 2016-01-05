@@ -36,8 +36,13 @@ void getNodeValue(NODE* node, char buf[], int len);
 NODE* getFirstChildNode(NODE* node);
 NODE* getNextSiblingNode(NODE* node);
 
+/*insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
+/*removeLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
 void appendChildNode(NODE* node, NODE* append);
+void insertChildNode(NODE* node, NODE* new_node, NODE* pos);
+void removeChildNode(NODE* node, NODE* pos);
 
+int getChildNodeIndex(NODE* node, NODE* target);
 int getChildNodeCount(NODE* node);
 int getChildNodeList(NODE* node, NODE* list[], int len);
 
