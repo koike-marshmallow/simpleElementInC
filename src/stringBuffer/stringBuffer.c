@@ -90,6 +90,45 @@ int sbIsBufferFull(STRBUF* sbuf){
 }
 
 
+int sbScanFile(STRBUF* sbuf, FILE *fp){
+	char *p;
+	int cnt, inp;
+	ASSERT_NULL(sbuf, "sbScanFile");
+	ifassert((fp == NULL), "sbScanFile", "fileがnullです");
+	
+	initStringBuffer(sbuf);
+	cnt = 0;
+	p = sbuf->buffer;
+	while( (inp = fgetc(fp)) != EOF ){
+		if( cnt < (sbuf->buffer_len - 1) ){
+			*p = (char)inp;
+			p++;
+		}
+		cnt++;
+	}
+	*p = '\0';
+	
+	return cnt;
+}
+
+
+int sbExportFile(STRBUF* sbuf, FILE *fp){
+	char *p;
+	ASSERT_NULL(sbuf, "sbExportFile");
+	ifassert((fp == NULL), "sbExportFile", "fileがnullです");
+	
+	p = sbuf->buffer;
+	while( *p != '\0' ){
+		if( fputc(*p, fp) == EOF ){
+			return EOF;
+		}
+		p++;
+	}
+	
+	return 0;
+}
+
+
 void printStringBufferInfo(STRBUF* sbuf){
 	ASSERT_NULL(sbuf, "printStringBufferInfo");
 	

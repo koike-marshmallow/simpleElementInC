@@ -4,10 +4,17 @@
 
 int main(void){
 	STRBUF* buf;
-	
+	FILE* fp;
+
 	buf = createStringBuffer(32);
 	
-	sbSetString(buf, "SUCCESS");
+	/*
+	fp = fopen("test.txt", "r");
+	sbScanFile(buf, fp);
+	fclose(fp);
+	*/
+		
+	sbCatString(buf, "SUCCESS");
 	sbCatString(buf, "oasifjoaifejpawoi");
 	sbCatString(buf, "foeijfoei");
 	

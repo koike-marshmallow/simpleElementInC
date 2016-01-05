@@ -17,5 +17,8 @@ int sbStringLength(STRBUF* sbuf);
 int sbLimitStringLength(STRBUF* sbuf);
 int sbIsBufferFull(STRBUF* sbuf);
 
+int sbScanFile(STRBUF* sbuf, FILE *fp);
+int sbExportFile(STRBUF* sbuf, FILE *fp);
+
 void printStringBufferInfo(STRBUF* sbuf);
 void dumpStringBuffer(FILE* fp, STRBUF* sbuf, int c);
