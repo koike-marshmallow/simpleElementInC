@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stringBuffer.h"
@@ -40,7 +41,7 @@ void destroyStringBuffer(STRBUF* sbuf){
 }
 
 
-void sbCopyString(STRBUF* sbuf, char* str){
+void sbSetString(STRBUF* sbuf, char* str){
 	ASSERT_NULL(sbuf, "sbCopyString");
 	
 	strncpy(sbuf->buffer, str, sbuf->buffer_len - 1);
@@ -81,8 +82,38 @@ int sbLimitStringLength(STRBUF *sbuf){
 	return sbuf->buffer_len - 1;
 }
 
+
 int sbIsBufferFull(STRBUF* sbuf){
-	ASSERT_NULL(sbuf, "sbBufferFull")+
+	ASSERT_NULL(sbuf, "sbBufferFull");
 	
 	return strlen(sbuf->buffer) >= (sbuf->buffer_len - 1);
+}
+
+
+void printStringBufferInfo(STRBUF* sbuf){
+	ASSERT_NULL(sbuf, "printStringBufferInfo");
+	
+	printf("LENGTH : %d", sbStringLength(sbuf));
+	if( sbIsBufferFull(sbuf) ) printf("(full)");
+	printf("\n");
+	printf("LIMIT  : %d\n", sbLimitStringLength(sbuf));
+	printf("STRING : \"%s\"\n", sbGetString(sbuf, NULL, 0));
+}
+
+
+void dumpStringBuffer(FILE* fp, STRBUF* sbuf, int c){
+	char *p;
+	int i, len;
+	ASSERT_NULL(sbuf, "dumpStringBuffer");
+	
+	if( c <= 0 ) c = 10;
+	len = sbuf->buffer_len;
+	fprintf(fp, "BUFFER SIZE : %d\n", len);
+	p = sbuf->buffer;
+	for( i=0; i<len; i++){
+		fprintf(fp, "%02x ", *p);
+		if( ((i + 1) % c) == 0 ) fprintf(fp, "\n");
+		p++;
+	}
+	fprintf(fp, "\n");
 }
