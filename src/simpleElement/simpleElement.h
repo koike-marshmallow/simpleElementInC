@@ -11,6 +11,6 @@ NODE* addText(NODE* element, char* text);
 char* getText(NODE* element, char* buf, int len);
 void clearText(NODE* element);
 
-void appendChildElement(NODE* element);
+void appendChildElement(NODE* element, NODE* apnd);
 void destroyChildElements(NODE* element);
 
