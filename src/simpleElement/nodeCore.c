@@ -19,6 +19,17 @@ NODE* createNode(int type){
 }
 
 
+NODE* createCopyNode(NODE* node){
+	NODE* clone_node;
+	
+	clone_node = createNode(node->node_type);
+	setNodeName(clone_node, node->node_name);
+	setNodeValue(clone_node, node->node_value);
+	
+	return clone_node;
+}	
+
+
 void destroyNode(NODE* node){
 	ASSERT_NULL(node, "destroyNode");
 
@@ -27,21 +38,23 @@ void destroyNode(NODE* node){
 }
 
 void rdestroyNode(NODE* node){
-	int i;
-	NODE *np, *next_np;
 	ASSERT_NULL(node, "rdestroyNode");
 	
-	/*子ノードを削除*/
-	if( node->child != NULL ){
-		np = node->child;
-		while( np != NULL ){
-			next_np = np->sibling;
-			rdestroyNode(np);
-			np = next_np;
-		}
-	}
-	
+	destroyChildNodes(node);
 	destroyNode(node);
+}
+
+
+void destroyChildNodes(NODE* node){
+	NODE *np, *next_np;
+	
+	np = node->child;
+	while( np != NULL ){
+		next_np = np->sibling;
+		rdestroyNode(np);
+		np = next_np;
+	}
+	node->child = NULL;
 }
 
 

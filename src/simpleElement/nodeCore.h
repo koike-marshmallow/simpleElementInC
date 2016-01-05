@@ -5,8 +5,6 @@
 #define NODE_NAME_LEN 64
 #define NODE_VALUE_LEN 256
 
-#define MAX_CHILDS_LEN 32
-
 
 struct s_node {
 	int node_type;
@@ -20,7 +18,9 @@ typedef struct s_node NODE;
 
 
 NODE* createNode(int type);
+NODE* createCopyNode(NODE* node);
 void destroyNode(NODE* node);
+void destroyChildNodes(NODE* node);
 void recursiveDestroyNode(NODE* node);
 
 void initNode(NODE* node, int type);

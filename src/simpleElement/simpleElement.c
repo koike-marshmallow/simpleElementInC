@@ -36,48 +36,31 @@ NODE* createElement(char* name){
 }
 
 
-NODE* createTextNode(char* text){
-	NODE *new_element;
-	
-	new_element = createNode(NODE_TEXT);
-	setNodeValue(new_element, text);
-	
-	return new_element;
-}
-
-
 void destroyElement(NODE* element){
-	destroyNode(element);
-}
-
-
-void recursiveDestroyElement(NODE* element){
 	rdestroyNode(element);
 }
 
 
-void initElement(NODE* element){
-	int type = getNodeType(element);
-	
-	initNode(element, type);
-}
-
-
-void clearElement(NODE* element){
-	clearNode(element);
-}
-
-
 NODE* addAttribute(NODE* element, char* name, char* value){
-	NODE* new_attr;
+	NODE *np;
 	
-	new_attr = createNode(NODE_ATTRIBUTE);
-	setNodeName(new_attr, name);
-	setNodeValue(new_attr, value);
+	for( np = getFirstChildNode(element);
+	np != NULL;
+	np = getNextSiblingNode(np) ){
+		if( getNodeType(np) == NODE_ATTRIBUTE 
+		&& strcmp(getNodeName(np, NULL, 0), name) == 0 ){
+			break;
+		}
+	}
 	
-	appendChildNode(element, new_attr);
+	if( np == NULL ){
+		np = createNode(NODE_ATTRIBUTE);
+		appendChildNode(element, np);
+		setNodeName(np, name);
+	}
+	setNodeValue(np, value);
 	
-	return new_attr;
+	return np;
 }
 
 
@@ -143,7 +126,7 @@ char* getAttributeValue(NODE* element, char* name, char* buf, int len){
 				if( buf != NULL ){
 					getNodeValue(itr, buf, len);
 				}
-				return getNodeName(itr, NULL, 0);
+				return getNodeValue(itr, NULL, 0);
 			}
 		}
 	}
@@ -186,6 +169,28 @@ void clearText(NODE* element){
 		if( getNodeType(itr) == NODE_TEXT ){
 			removeChildNode(element, itr);
 			destroyNode(itr);
+		}
+		itr = next_itr;
+	}
+}
+
+
+void appendChildElement(NODE* element, NODE* apnd){
+	if( getNodeType(apnd) == NODE_ELEMENT ){
+		appendChildNode(element, apnd);
+	}
+}
+
+
+void destroyChildElements(NODE* element){
+	NODE *itr, *next_itr;
+	
+	itr = getFirstChildNode(element);
+	while( itr != NULL ){
+		next_itr = getNextSiblingNode(itr);
+		if( getNodeType(itr) == NODE_ELEMENT ){
+			removeChildNode(element, itr);
+			rdestroyNode(itr);
 		}
 		itr = next_itr;
 	}

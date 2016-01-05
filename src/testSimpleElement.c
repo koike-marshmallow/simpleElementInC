@@ -17,9 +17,7 @@ int main(void){
 	appendChildNode(root, test);
 	
 	traceNodes(root, 0);
-	
 	deleteAttribute(test, "これが属性");
-	/*clearText(test);*/
 	
 	cnt = getAttributeNameList(test, (char*)namelist, 8, 64);
 	for( i=0; i<cnt; i++){
@@ -31,8 +29,6 @@ int main(void){
 	printf("getattrv: %s\n", namelist[1]);
 	
 	traceNodes(root, 0);
-	
 	rdestroyNode(root);
-	
 	return 0;
 }
