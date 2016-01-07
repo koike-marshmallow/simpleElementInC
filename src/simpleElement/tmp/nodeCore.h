@@ -17,18 +17,6 @@ struct s_node {
 typedef struct s_node NODE;
 
 
-NODE* createNode(void);
-NODE* destroyNode(NODE* node);
-
-void initNode(NODE* node, int type);
-
-void setNodeType(NODE* node, int typec);
-void setNodeName(NODE* node, char* name);
-void setNodeValue(NODE* node, char* value);
-int getNodeType(NODE* node);
-char* getNodeName(NODE* node, char* buf, int len);
-char* getNodeValue(NODE* node, char* buf, int len);
-
 NODE* createNode(int type);
 NODE* createCopyNode(NODE* node);
 void destroyNode(NODE* node);
@@ -48,8 +36,8 @@ char* getNodeValue(NODE* node, char* buf, int len);
 NODE* getFirstChildNode(NODE* node);
 NODE* getNextSiblingNode(NODE* node);
 
-void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);
-NODE* removeLinkedNodeSibling(NODE **pre_np);
+/*void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node);*/
+/*NODE* removeLinkedNodeSibling(NODE **pre_np);*/
 void appendChildNode(NODE* node, NODE* append);
 void insertChildNode(NODE* node, NODE* new_node, NODE* pos);
 void removeChildNode(NODE* node, NODE* pos);
