@@ -1,5 +1,7 @@
-nodeCore.o : error/error.h simpleElement/nodeCore.h simpleElement/nodeCore.c
-	cc -c simpleElement/nodeCore.c
+#nodeCore.o : error/error.h simpleElement/nodeCore.h simpleElement/nodeCore.c
+#	cc -c simpleElement/nodeCore.c
+simpleNode.o : error/error.h simpleElement/simpleNode.h simpleElement/simpleNode.c
+	cc -c simpleElement/simpleNode.c
 simpleElement.o : simpleElement/nodeCore.h simpleElement/simpleElement.h simpleElement/simpleElement.c
 	cc -c simpleElement/simpleElement.c
 error.o : error/error.h error/error.c
