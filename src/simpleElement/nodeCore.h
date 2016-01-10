@@ -4,7 +4,7 @@
 struct s_node {
 	void* content;
 	struct s_node* child;
-	struct s_node* slibong;
+	struct s_node* sibling;
 };
 typedef struct s_node NODE;
 
@@ -14,12 +14,13 @@ void initNodeCore(NODE* node);
 void destroyNodeCore(NODE* node);
 
 void* getNodeContent(NODE* node);
+void setNodeContent(NODE* node, void* ptr);
 
 NODE* getFirstChildNode(NODE* node);
 NODE* getNextSiblingNode(NODE* node);
 
-void insertLinkedNodeSibling(NODE** prev_sibling_ptr, NODE* new_node);
-NODE* removeLinkedNodeSibling(NODE** prev_sibling_ptr);
+void insertLinkedNodeSibling(NODE** prev_np, NODE* new_node);
+NODE* removeLinkedNodeSibling(NODE** prev_np);
 
 NODE** getLinkedNodeSibidxPNP(NODE* node, int idx);
 NODE** getLinkedNodeSibtailPNP(NODE* node);
