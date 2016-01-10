@@ -114,7 +114,7 @@ void initNodeIterator(NODETREE_ITR* itr, NODE* root){
 	ASSERT_NULL(itr, "initNodeIterator");
 	
 	initNodeStack(itr->stack);
-	itr->ptr = root;
+	nodeStackPush(itr->stack, root);
 }
 
 
@@ -130,40 +130,40 @@ void destroyNodeIterator(NODETREE_ITR* itr){
 NODE* nodeitrNext(NODETREE_ITR* itr){
 	NODE* np;
 	ASSERT_NULL(itr, "nodeitrNext");
-	ifassert((itr->ptr == NULL), "nodeitrNext", "イテレータは終端に達しています");
-
-	np = getFirstChildNode(itr->ptr);
-	if( np != NULL ){
+	ifassert((isNodeStackEmpty(itr->stack)), "nodeitrNext", "イテレータは終端に達しています");
+	
+	np = nodeStackRetrieve(itr->stack);
+	if( getFirstChildNode(np) != NULL ){
 		ifassert((isNodeStackFull(itr->stack)), "nodeitrNext", "スタックオーバーフローです");
-		nodeStackPush(itr->stack, itr->ptr);
-		itr->ptr = np;
-		return np;
+		nodeStackPush(itr->stack, getFirstChildNode(np));
+		return nodeStackRetrieve(itr->stack);
 	}
 	
-	np = getNextSiblingNode(itr->ptr);
-	while( np == NULL ){
+	nodeStackPop(itr->stack);
+	while( getNextSiblingNode(np) == NULL ){
 		if( isNodeStackEmpty(itr->stack) ){
-			itr->ptr = NULL;
 			return NULL;
 		}
 		np = nodeStackPop(itr->stack);
-		np = getNextSiblingNode(np);
 	}
 	
-	itr->ptr = np;
-	return np;
+	nodeStackPush(itr->stack, getNextSiblingNode(np));
+	return nodeStackRetrieve(itr->stack);
 }
+	
 
 
 NODE* nodeitrGetNode(NODETREE_ITR* itr){
 	ASSERT_NULL(itr, "nodeitrGetNode");
 	
-	return itr->ptr;
+	if( isNodeStackEmpty(itr->stack) ) return NULL;
+	
+	return nodeStackRetrieve(itr->stack);
 }
 
 
 int nodeitrGetLevel(NODETREE_ITR* itr){
 	ASSERT_NULL(itr, "nodeitrGetLevel");
 	
-	return getNodeStackCount(itr->stack);
+	return getNodeStackCount(itr->stack) - 1;
 }

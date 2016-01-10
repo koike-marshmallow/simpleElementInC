@@ -14,7 +14,6 @@ typedef struct s_nodestack NODESTACK;
 
 struct s_nodeiterator {
 	NODESTACK* stack;
-	NODE* ptr;
 };
 typedef struct s_nodeiterator NODETREE_ITR;
 
