@@ -3,6 +3,7 @@ nodeCore
 	createNodeCore
 	initNodeCore
 	destroyNodeCore
+	getNodeContent
 	getFirstChildNode
 	getNextSiblingNode
 	insertLinkedNodeSibling
@@ -14,6 +15,7 @@ nodeCore
 	
 
 nodeStack
+	<include "nodeCore.h">
 	{s_nodeStack: STACK_TYPE* stack, int size, int cnt}
 	createNodeStack
 	destroyNodeStack
@@ -26,6 +28,7 @@ nodeStack
 
 
 nodeIterator
+	<include "nodeCore.h" "nodeStack.h">
 	{node_iterator: nodeStack* stack, s_node* ptr}
 	createNodeIterator
 	destroyNodeIterator
@@ -33,6 +36,7 @@ nodeIterator
 	nodeitrGet
 
 simpleNode
+	<include "nodeCore.h" "nodeIterator.h">
 	{s_nodecontent: int type, char* name, char* value}
 	createNodeContent
 	destroyNodeContent
