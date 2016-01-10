@@ -88,4 +88,60 @@ NODE* removeLinkedNodeSibling(NODE** prev_np){
 }
 
 
+NODE** getLinkedNodeSibidxPNP(NODE* node, int idx){
+	NODE** pnp;
+	int i;
+	ASSERT_NULL(node, "getLinkedNodeSibidxPNP");
+	
+	pnp = &(node->child);
+	for( i=0; i<idx; i++){
+		if( *pnp == NULL ) return NULL;
+		pnp = &((*pnp)->sibling);
+	}
+	
+	return pnp;
+}
 
+
+NODE** getLinkedNodeSibtailPNP(NODE* node){
+	NODE** pnp;
+	ASSERT_NULL(node, "getLinkedNodeSibtailPNP");
+	
+	pnp = &(node->child);
+	while( *pnp != NULL ){
+		pnp = &((*pnp)->sibling);
+	}
+	
+	return pnp;
+}
+
+
+int getChildNodeIndex(NODE* node, NODE* target){
+	NODE* np;
+	int cnt;
+	ASSERT_NULL(node, "getChildNodeIndex");
+	ifassert((target == NULL), "getChildNodeIndex", "target node pointer is NULL");
+	
+	np = getFirstChildNode(np);
+	cnt = 0;
+	while( np != NULL ){
+		if( np == target ) return cnt;
+		np = getNextSiblingNode(np);
+		cnt++;
+	}
+	
+	return -1;
+}
+
+
+int getChlidNodeCount(NODE* node){
+	NODE* np;
+	int cnt;
+	ASSERT_NULL(node, "getChildNodeCount");
+	
+	np = getFirstChildNode(np);
+	cnt = 0;
+	while( np != NULL ) cnt++;
+	
+	return cnt;
+}

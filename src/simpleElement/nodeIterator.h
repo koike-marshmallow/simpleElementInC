@@ -3,10 +3,10 @@
 
 #ifndef NODECORE_H
 #	include "nodeCore.h"
-#endif NODECORE_H
+#endif
 
 struct s_nodestack {
-	NODE* stack;
+	NODE** stack;
 	int size;
 	int cnt;
 };
@@ -23,6 +23,7 @@ extern int NODEITERATOR_INIT_STACKLEN;
 
 
 NODESTACK* createNodeStack(int s);
+void initNodeStack(NODESTACK* ns);
 void destroyNodeStack(NODESTACK* ns);
 
 void nodeStackPush(NODESTACK* ns, NODE* node);
@@ -36,7 +37,7 @@ int isNodeStackEmpty(NODESTACK* ns);
 
 NODETREE_ITR* createNodeIterator(NODE* root);
 void initNodeIterator(NODETREE_ITR* itr, NODE* root);
-void destroyNodeIterator(void);
+void destroyNodeIterator(NODETREE_ITR* itr);
 
 NODE* nodeitrNext(NODETREE_ITR* itr);
 NODE* nodeitrGet(NODETREE_ITR* itr);

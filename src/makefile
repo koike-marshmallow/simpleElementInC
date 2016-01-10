@@ -1,7 +1,23 @@
-#nodeCore.o : error/error.h simpleElement/nodeCore.h simpleElement/nodeCore.c
-#	cc -c simpleElement/nodeCore.c
-simpleNode.o : error/error.h simpleElement/simpleNode.h simpleElement/simpleNode.c
-	cc -c simpleElement/simpleNode.c
+## sources
+src_error_h = error/error.h
+src_error_c = error/error.c
+
+src_nodeCore_h = simpleElement/nodeCore.h
+src_nodeCore_c = simpleElement/nodeCore.c
+src_nodeIterator_h = simpleElement/nodeIterator.h
+src_nodeIterator_c = simpleElement/nodeIterator.c
+src_simpleNode_h = simpleELement/simpleNode.h
+src_simpleNode_c = simpleElement/simpleNode.c
+
+
+
+## module rules
+nodeCore.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeCore_c)
+	cc -c $(src_nodeCore_c)
+nodeIterator.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeIterator_h) $(src_nodeIterator_c)
+	cc -c $(src_nodeIterator_c)
+simpleNode.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) $(src_simpleNode_c)
+	cc -c $(src_simpleNode_c)
 simpleElement.o : simpleElement/nodeCore.h simpleElement/simpleElement.h simpleElement/simpleElement.c
 	cc -c simpleElement/simpleElement.c
 error.o : error/error.h error/error.c
