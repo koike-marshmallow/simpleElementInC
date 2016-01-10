@@ -2,28 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nodeCore.h"
+#include "simpleNode.h"
+#include "simpleElement.h"
 
 #define BUF_SHORT_LEN 32
 #define BUF_LONG_LEN 256
 
-/*
-NODE* createElement(char* name);
-NODE* createTextNode(char* text);
-void destroyElement(NODE* element);
-
-void initElement(NODE* element);
-void clearElement(NODE* element);
-
-void addAttribute(NODE* element, char* name, char* value);
-void deleteAttribute(NODE* element, char* name);
-void clearAttribute(NODE* element);
-int getAttributeNameList(NODE* element, char* list[], int len);
-void getAttributeValue(NODE* element, char* name, char buf[], int len);
-
-void setText(NODE* element, char* text);
-void getText(NODE* element, char buf[], int len);
-void clearText(NODE* element);
-*/
+#define PRINTNODECORE(np) printf("NODE CORE(%p, %p, %p)\n", np->content, np->child, np->sibling);
 
 
 NODE* createElement(char* name){
@@ -71,7 +56,7 @@ void deleteAttribute(NODE* element, char* name){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( strcmp(getNodeName(itr, NULL, 0), name) == 0 ){
-			removeChildNode(element, itr);
+			removeChildNode(element, getChildNodeIndex(itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -86,7 +71,7 @@ void clearAttribute(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_ATTRIBUTE ){
-			removeChildNode(element, itr);
+			removeChildNode(element, getChildNodeIndex(itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -145,7 +130,7 @@ NODE* addText(NODE* element, char* text){
 }
 
 
-void getText(NODE* element, char* buf, int len){
+char* getText(NODE* element, char* buf, int len){
 	int child_len, i;
 	NODE* itr;
 	
@@ -157,6 +142,8 @@ void getText(NODE* element, char* buf, int len){
 			strncat(buf, getNodeValue(itr, NULL, 0), len - strlen(buf) - 1);
 		}
 	}
+	
+	return buf;
 }
 
 
@@ -167,7 +154,7 @@ void clearText(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_TEXT ){
-			removeChildNode(element, itr);
+			removeChildNode(element, getChildNodeIndex(itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -189,7 +176,7 @@ void destroyChildElements(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_ELEMENT ){
-			removeChildNode(element, itr);
+			removeChildNode(element, getChildNodeIndex(itr));
 			rdestroyNode(itr);
 		}
 		itr = next_itr;

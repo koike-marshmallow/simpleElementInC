@@ -20,6 +20,7 @@ int main(void){
 	traceNodes(root, 0);
 	deleteAttribute(test, "これが属性");
 	
+#if 0
 	cnt = getAttributeNameList(test, (char*)namelist, 8, 64);
 	for( i=0; i<cnt; i++){
 		printf("%d: %s\n", i, namelist[i]);
@@ -30,6 +31,8 @@ int main(void){
 	printf("getattrv: %s\n", namelist[1]);
 	
 	traceNodes(root, 0);
-	rdestroyNode(root);
+	
+#endif
+	/*rdestroyNode(root);*/
 	return 0;
 }

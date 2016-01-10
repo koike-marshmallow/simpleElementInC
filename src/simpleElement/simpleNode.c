@@ -9,7 +9,7 @@
 #define ASSERT_NULL(n, fnc) ifassert((n == NULL), fnc, "値がnullです");
 #define ASSERT_CONTENT_NULL(cp, fnc) ifassert((cp == NULL), fnc, "ノードにデータがありません");
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
-
+#define PRINTNODECORE(np) printf("NODE CORE(%p, %p, %p)\n", np->content, np->child, np->sibling);
 
 NODE* createNode(int type){
 	NODE* new_node;
@@ -76,7 +76,6 @@ void destroyChildNodes(NODE* node){
 	node->child = NULL;
 }
 
-/* ************************************************** */
 
 void setNodeType(NODE* node, int typec){
 	NCONTENT* content;
