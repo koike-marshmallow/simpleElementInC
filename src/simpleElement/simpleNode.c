@@ -2,50 +2,67 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../error/error.h"
-#include "../ptrStack/ptrStack.h"
+#include "nodeCore.h"
+#include "nodeIterator.h"
 #include "simpleNode.h"
 
 #define ASSERT_NULL(n, fnc) ifassert((n == NULL), fnc, "値がnullです");
+#define ASSERT_CONTENT_NULL(cp, fnc) ifassert((cp == NULL), fnc, "ノードにデータがありません");
+#define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
 
-/* ************************************************** */
 
 NODE* createNode(int type){
 	NODE* new_node;
+	NCONTENT* new_content;
 	
-	new_node = malloc(sizeof(NODE));
-	ifassert((new_node == NULL), "createNode", "メモリ確保に失敗しました");
+	new_node = createNodeCore();
+	
+	new_content = malloc(sizeof(NCONTENT));
+	ifassert((new_content == NULL),
+		"createNode", "ノードの生成に失敗しました");
+	setNodeContent(new_node, new_content);
 	
 	initNode(new_node, type);
 	
 	return new_node;
 }
 
+
 void initNode(NODE* node, int type){
 	int i;
+	NCONTENT* content;
 	ASSERT_NULL(node, "initNode");
 
-	node->node_type = type;
-	memset(node->node_name, 0, NODE_NAME_LEN);
-	memset(node->node_value, 0, NODE_VALUE_LEN);
-	node->child = NULL;
-	node->sibling = NULL;
+	content = getNodeContent(node);
+	initNodeCore(node);
+	setNodeContent(node, content);
+	
+	content->type = type;
+	memset(content->name, 0, NODE_NAME_LEN);
+	memset(content->value, 0, NODE_VALUE_LEN);
 }
 
-/* ************************************************** */
 
 void destroyNode(NODE* node){
+	NCONTENT* content;
 	ASSERT_NULL(node, "destroyNode");
 
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "destroyNode");
+	
 	initNode(node, 0);
-	free(node);
+	free(content);
+	destroyNodeCore(node);
 }
 
-void recursiveDestroyNode(NODE* node){
+
+void rdestroyNode(NODE* node){
 	ASSERT_NULL(node, "rdestroyNode");
 	
 	destroyChildNodes(node);
 	destroyNode(node);
 }
+
 
 void destroyChildNodes(NODE* node){
 	NODE *np, *next_np;
@@ -62,219 +79,117 @@ void destroyChildNodes(NODE* node){
 /* ************************************************** */
 
 void setNodeType(NODE* node, int typec){
+	NCONTENT* content;
 	ASSERT_NULL(node, "setNodeType");
 	
-	node->node_type = typec;
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "setNodeType");
+	content->type = typec;
 }
 
 void setNodeName(NODE* node, char* name){
-	nullCheck(node, "setNodeName", "値がNULLです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "setNodeName");
+
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "setNodeName");
 	
-	strncpy(node->node_name, name, NODE_NAME_LEN - 1);
+	strncpy(content->name, name, NODE_NAME_LEN - 1);
 }
 
 void setNodeValue(NODE* node, char* value){
-	nullCheck(node, "setNodeValue", "値がNULLです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "setNodeValue");
+
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "setNodeValue");
 	
-	strncpy(node->node_value, value, NODE_VALUE_LEN - 1);
+	strncpy(content->value, value, NODE_VALUE_LEN - 1);
 }
 
 int getNodeType(NODE* node){
-	nullCheck(node, "getNodeType", "値がNULLです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "getNodeType");
+
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "getNodeType");
 	
-	return node->node_type;
+	return content->type;
 }
 
 char* getNodeName(NODE* node, char* buf, int len){
-	nullCheck(node, "getNodeName", "値がNULLです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "getNodeName");
+
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "getNodeName");
 	
 	if( buf != NULL ){
-		strncpy(buf, node->node_name, len - 1);
+		strncpy(buf, content->name, len - 1);
 	}
-	return node->node_name;
+	return content->name;
 }
 
 char* getNodeValue(NODE* node, char* buf, int len){
-	nullCheck(node, "getNodeValue", "値がNULLです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "getNodeValue");
+
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "getNodeValue");
 	
 	if( buf != NULL ){
-		strncpy(buf, node->node_value, len - 1);
+		strncpy(buf, content->value, len - 1);
 	}
-	return node->node_value;
+	return content->value;
 }
 
-/* ************************************************** */
 
-void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node){
-	NODE *tmp;
-	tmp = *pre_np;
-	*pre_np = new_node;
-	new_node->sibling = tmp;
-}
-
-NODE* removeLinkedNodeSibling(NODE **pre_np){
-	NODE *tmp;
-	tmp = *pre_np;
-	*pre_np = tmp->sibling;
-	tmp->sibling = NULL;
-}
-
-NODE** getLinkedNodeSiblingPNP(NODE* node, int idx){
-	int i;
-	NODE **pnp;
-	pnp = &(node->child);
-	for( i=0; i<idx; i++){
-		if( *pnp == NULL ) return NULL;
-		pnp = &((*pnp)->sibling);
-	}
-	return pnp;
-}
-
-/* ************************************************** */
-
-void appendChildNode(NODE* node, NODE* append){
-	NODE **target;
+void appendChildNode(NODE* node, NODE* apnd){
+	NODE** pnp;
 	ASSERT_NULL(node, "appendChildNode");
+	ASSERT_NULL(apnd, "appendChildNode");
 	
-	target = &(node->child);
-	while( *target != NULL ){
-		target = &((*target)->sibling);
-	}
-	
-	*target = append;
+	pnp = getLinkedNodeSibtailPNP(node);
+	ifassert((pnp == NULL), "appendChildNode", "予期せぬエラーが発生しました");
+	insertLinkedNodeSibling(pnp, apnd);
 }
+
 
 void insertChildNode(NODE* node, int idx, NODE* new_node){
 	NODE **prev;
 	ASSERT_NULL(node, "insertChildNode");
 	ASSERT_NULL(new_node, "insertChildNode");
 	
-	prev = getLinkedNodeSiblingPNP(node, idx);
+	prev = getLinkedNodeSibidxPNP(node, idx);
 	ifassert((prev == NULL), "insertChildNode", "挿入位置を特定できません");
 	insertLinkedNodeSibling(prev, new_node);
 }
+
 
 NODE* removeChildNode(NODE* node, int idx){
 	NODE **prev;
 	ASSERT_NULL(node, "deleteChildNode");
 	
-	prev = getLinkedNodeSiblingPNP(node, idx);
+	prev = getLinkedNodeSibidxPNP(node, idx);
 	ifassert((prev == NULL), "deleteChildNode", "削除位置を特定できません");
 	return removeLinkedNodeSibling(prev);
 }
 
-/* ************************************************** */
-
-NODE* getFirstChildNode(NODE* node){
-	ASSERT_NULL(node, "getFirstChildNode");
-	
-	return node->child;
-}
-
-NODE* getNextSiblingNode(NODE* node){
-	ASSERT_NULL(node, "getNextSibling");
-	
-	return node->sibling;
-}
-
-/* ************************************************** */
-
-int getChildNodeIndex(NODE* node, NODE* target){
-	int idx;
-	NODE* np;
-	ASSERT_NULL(node, "getChildNodeIndex");
-	
-	np = getFirstChildNode(node);
-	while( np != NULL ){
-		if( np == target ) return idx;
-		idx++;
-		np = getNextSiblingNode(np);
-	}
-	
-	return -1;
-}
-
-int getChildNodeCount(NODE* node){
-	int cnt;
-	NODE* np;
-	ASSERT_NULL(node, "getChildNodeCount");
-	
-	np = getFirstChildNode(node);
-	cnt = 0;
-	while( np != NULL ) np = getNextSiblingNode(np);
-	
-	return cnt;
-}
-
-/* ************************************************** */
-
-NODETREE_ITR* nodeitrCreate(NODE* root){
-	NODETREE_ITR* new_itr;
-	ASSERT_NULL(root, "nodeitrCreate");
-	
-	new_itr = malloc(sizeof(NODETREE_ITR));
-	ifassert((new_itr == NULL), "nodeitrCreate", "イテレータの生成に失敗しました");
-	
-	new_itr->stack = createPtrStack(NODETREE_ITR_STACK_LEN);
-	ifassert((new_itr->stack == NULL), "nodeitrCreate", "スタックの生成に失敗しました");
-	
-	new_itr->ptr = NULL;
-	
-	return new_itr;
-}
-
-void nodeitrDestroy(NODETREE_ITR* itr){
-	ASSERT_NULL(itr, "nodeitrDestroy");
-	
-	destroyPtrStack(itr->stack);
-	itr->ptr = (void*)0;
-	free(itr);
-}
-
-NODE* nodeitrNext(NODETREE_ITR* itr){
-	NODE* np;
-	ASSERT_NULL(itr, "nodeitrNext");
-	ifassert((itr->ptr == NULL), "nodeitrNext", "イテレータは終端に達しています");
-
-	np = getFirstChildNode(itr->ptr);
-	if( np != NULL ){
-		ifassert((isPtrStackFull(itr->stack)), "nodeitrNext", "スタックオーバーフローです");
-		pushPtrStack(itr->stack, itr->ptr);
-		itr->ptr = np;
-		return np;
-	}
-	
-	np = getNextSiblingNode(np);
-	while( np == NULL ){
-		if( isPtrStackEmpty(itr->stack) ){
-			itr->ptr = NULL;
-			return NULL;
-		}
-		np = popPtrStack(itr->stack);
-		np = getNextSiblingNode(np);
-	}
-	
-	itr->ptr = np;
-	return np;
-}
-
-NODE* nodeitrGet(NODETREE_ITR* itr){
-	ASSERT_NULL(itr, "nodeitrNext");
-	return itr->ptr;
-}
-
-/* ************************************************** */
 
 void printNodeInfo(NODE* node, int indent){
 	int i;
-	nullCheck(node, "printNodeInfo", "値がnullです");
+	NCONTENT* content;
+	ASSERT_NULL(node, "printNodeInfo");
+	
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "printNodeInfo");
 	
 	PRINTINDENT(indent);
-	printf("node type: %d\n", node->node_type);
+	printf("node type: %d\n", content->type);
 	PRINTINDENT(indent);
-	printf("node name: %s\n", node->node_name);
+	printf("node name: %s\n", content->name);
 	PRINTINDENT(indent);
-	printf("node value: %s\n", node->node_value);
+	printf("node value: %s\n", content->value);
 }
 	
 	
@@ -290,34 +205,3 @@ void traceNodes(NODE* node, int indent){
 		np = getNextSiblingNode(np); /* np = np->sibling */
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-

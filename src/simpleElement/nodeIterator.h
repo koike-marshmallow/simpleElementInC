@@ -40,6 +40,7 @@ void initNodeIterator(NODETREE_ITR* itr, NODE* root);
 void destroyNodeIterator(NODETREE_ITR* itr);
 
 NODE* nodeitrNext(NODETREE_ITR* itr);
-NODE* nodeitrGet(NODETREE_ITR* itr);
+NODE* nodeitrGetNode(NODETREE_ITR* itr);
+int nodeitrGetLevel(NODETREE_ITR* itr);
 
 #endif

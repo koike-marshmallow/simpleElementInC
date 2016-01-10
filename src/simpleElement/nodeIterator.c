@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../error/error.h"
@@ -80,14 +81,14 @@ int getNodeStackCount(NODESTACK* ns){
 }
 
 
-int getNodeStackFull(NODESTACK* ns){
+int isNodeStackFull(NODESTACK* ns){
 	ASSERT_NULL(ns, "getNodeStackFull");
 	
 	return ns->cnt >= ns->size;
 }
 
 
-int getNodeStackEmpty(NODESTACK* ns){
+int isNodeStackEmpty(NODESTACK* ns){
 	ASSERT_NULL(ns, "getNodeStackEmpty");
 	
 	return ns->cnt <= 0;
@@ -139,7 +140,7 @@ NODE* nodeitrNext(NODETREE_ITR* itr){
 		return np;
 	}
 	
-	np = getNextSiblingNode(np);
+	np = getNextSiblingNode(itr->ptr);
 	while( np == NULL ){
 		if( isNodeStackEmpty(itr->stack) ){
 			itr->ptr = NULL;
@@ -154,7 +155,15 @@ NODE* nodeitrNext(NODETREE_ITR* itr){
 }
 
 
-NODE* nodeitrGet(NODETREE_ITR* itr){
-	ASSERT_NULL(itr, "nodeitrNext");
+NODE* nodeitrGetNode(NODETREE_ITR* itr){
+	ASSERT_NULL(itr, "nodeitrGetNode");
+	
 	return itr->ptr;
+}
+
+
+int nodeitrGetLevel(NODETREE_ITR* itr){
+	ASSERT_NULL(itr, "nodeitrGetLevel");
+	
+	return getNodeStackCount(itr->stack);
 }

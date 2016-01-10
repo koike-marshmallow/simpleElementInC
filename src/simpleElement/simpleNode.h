@@ -18,13 +18,21 @@
 #define NODE_VALUE_LEN 256
 
 
+struct s_nodecontent {
+	int type;
+	char name[NODE_NAME_LEN];
+	char value[NODE_VALUE_LEN];
+};
+typedef struct s_nodecontent NCONTENT;
+
+
 /* Node creator */
 NODE* createNode(int type);
 void initNode(NODE* node, int type);
 
 /* Node destroyer */
 void destroyNode(NODE* node);
-void recursiveDestroyNodes(NODE* node);
+void rdestroyNodes(NODE* node);
 void destroyChildNodes(NODE* node);
 
 /* Node content controller */
@@ -43,3 +51,5 @@ NODE* removeChildNode(NODE* node, int idx);
 /* debug */
 void printNodeInfo(NODE* node, int indent);
 void traceNodes(NODE* node, int indent);
+
+#endif

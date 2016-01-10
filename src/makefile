@@ -6,7 +6,7 @@ src_nodeCore_h = simpleElement/nodeCore.h
 src_nodeCore_c = simpleElement/nodeCore.c
 src_nodeIterator_h = simpleElement/nodeIterator.h
 src_nodeIterator_c = simpleElement/nodeIterator.c
-src_simpleNode_h = simpleELement/simpleNode.h
+src_simpleNode_h = simpleElement/simpleNode.h
 src_simpleNode_c = simpleElement/simpleNode.c
 
 
@@ -25,6 +25,12 @@ error.o : error/error.h error/error.c
 stringBuffer.o : error/error.h stringBuffer/stringBuffer.h stringBuffer/stringBuffer.c
 	cc -c stringBuffer/stringBuffer.c
 
+
+testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
+	cc -c testSimpleNode.c
+objs_testSimpleNode = testSimpleNode.o nodeCore.o nodeIterator.o simpleNode.o error.o
+testSimpleNode : $(objs_testSimpleNode)
+	cc -o testSimpleNode $(objs_testSimpleNode)
 
 testStringBuffer.o : stringBuffer/stringBuffer.h testStringBuffer.c
 	cc -c testStringBuffer.c
