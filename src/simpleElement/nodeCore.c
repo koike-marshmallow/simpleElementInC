@@ -122,7 +122,7 @@ int getChildNodeIndex(NODE* node, NODE* target){
 	ASSERT_NULL(node, "getChildNodeIndex");
 	ifassert((target == NULL), "getChildNodeIndex", "target node pointer is NULL");
 	
-	np = getFirstChildNode(np);
+	np = getFirstChildNode(node);
 	cnt = 0;
 	while( np != NULL ){
 		if( np == target ) return cnt;
@@ -134,14 +134,17 @@ int getChildNodeIndex(NODE* node, NODE* target){
 }
 
 
-int getChlidNodeCount(NODE* node){
+int getChildNodeCount(NODE* node){
 	NODE* np;
 	int cnt;
 	ASSERT_NULL(node, "getChildNodeCount");
 	
-	np = getFirstChildNode(np);
+	np = getFirstChildNode(node);
 	cnt = 0;
-	while( np != NULL ) cnt++;
+	while( np != NULL ){
+		cnt++;
+		np = getNextSiblingNode(np);
+	}
 	
 	return cnt;
 }

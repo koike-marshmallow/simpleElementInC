@@ -3,6 +3,8 @@
 #include "simpleElement/nodeIterator.h"
 #include "simpleElement/simpleNode.h"
 
+#define STACK_TRACE 0
+
 #define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
 
 void testNodeIterator(NODE* root);
@@ -33,19 +35,16 @@ int main(void){
 	
 	traceNodes(n0, 0);
 	
-	printf("\n");
+	NODEITERATOR_INIT_STACKLEN = 8;
 	testNodeIterator(n0);
 	
+	removeChildNode(n4, getChildNodeIndex(n4, n5));
+	testNodeIterator(n0);
 	
-	
-#if 0
-	removeChildNode(n4, n5);
-	insertChildNode(n1, n5, n2);
-	
-	traceNodes(n0, 0);
+	insertChildNode(n1, getChildNodeIndex(n1, n2), n5);
+	testNodeIterator(n0);
 	
 	rdestroyNode(n0);
-#endif
 	
 
 	return 0;
@@ -53,45 +52,52 @@ int main(void){
 
 
 void printNode(NODE* node, char* tail){
-	printf("(%d, %s, \"%s\")%s", 
+	printf("(%d, %s, \"%s\")[%d]%s", 
 		getNodeType(node),
 		getNodeName(node, NULL, 0),
 		getNodeValue(node, NULL, 0),
+		getChildNodeCount(node),
 		tail);
 }
 
+void printNode2(NODE* node){
+	switch( getNodeType(node) ){
+	case NODE_ELEMENT:
+		printf("<%s>\n", getNodeName(node, NULL, 0)); break;
+	case NODE_ATTRIBUTE:
+		printf("%s=\"%s\"\n", 
+			getNodeName(node, NULL, 0),
+			getNodeValue(node, NULL, 0)); break;
+	case NODE_TEXT:
+		printf("\"%s\"\n", getNodeValue(node, NULL, 0)); break;
+	}
+}
+
+void printNodeStack(NODESTACK* stk){
+#if STACK_TRACE
+	int i;
+	printf("--NODE STACK (%d/%d) [", stk->cnt, stk->size);
+	for( i=0; i<stk->cnt; i++){
+		printf("%p", stk->stack[i]);
+		if( i != (stk->cnt - 1) ) printf(" ");
+	}
+	printf("]\n");
+#endif
+}
 
 void testNodeIterator(NODE* root){
 	NODETREE_ITR* itr;
 	int i;
 	
+	printf("\n");
+	
 	for( itr = createNodeIterator(root);
 	nodeitrGetNode(itr) != NULL;
 	nodeitrNext(itr)){
+		printNodeStack(itr->stack);
 		PRINTINDENT(nodeitrGetLevel(itr));
 		printNode(nodeitrGetNode(itr), "\n");
 	}
 }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+

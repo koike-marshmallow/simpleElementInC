@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "simpleElement/nodeCore.h"
+#include "simpleElement/simpleNode.h"
 #include "simpleElement/simpleElement.h"
 
 int main(void){
