@@ -1,0 +1,58 @@
+nodeCore
+	{s_node: void* content, s_node* child, s_node* sibling}
+	createNodeCore
+	initNodeCore
+	destroyNodeCore
+	getNodeContent
+	getFirstChildNode
+	getNextSiblingNode
+	insertLinkedNodeSibling
+	removeLinkedNodeSibling
+	getLinkedNodeSiblingPNP
+	getLinkedNodeSiblingTailPNP
+	getChildNodeIndex
+	getChildNodeCount
+	
+
+nodeStack
+	<include "nodeCore.h">
+	{s_nodeStack: STACK_TYPE* stack, int size, int cnt}
+	createNodeStack
+	destroyNodeStack
+	pushNodeStack
+	popNodeStack
+	retrieveNodeStack
+	getNodeStackCount
+	isNodeStackFull
+	isNodeStackEmpty
+
+
+nodeIterator
+	<include "nodeCore.h" "nodeStack.h">
+	{node_iterator: nodeStack* stack, s_node* ptr}
+	createNodeIterator
+	destroyNodeIterator
+	nodeitrNext
+	nodeitrGet
+
+simpleNode
+	<include "nodeCore.h" "nodeIterator.h">
+	{s_nodecontent: int type, char* name, char* value}
+	createNodeContent
+	destroyNodeContent
+	createNode
+	destroyNode
+	rdestroyNode
+	destroyChildNodes
+	setNodeType
+	setNodeName
+	setNodeValue
+	getNodeType
+	getNodeName
+	getNodeValue
+	appendChildNode
+	insertChildNode
+	removeChildNode
+	printNodeInfo
+	traceNodes
+	

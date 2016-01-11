@@ -1,129 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "nodeCore.h"
 #include "../error/error.h"
+#include "nodeCore.h"
 
-#define ASSERT_NULL(p, fnc) ifassert((p == NULL), fnc, "値がNULLです");
-#define PRINTINDENT(a) for( i=0; i<a; i++) printf("  ");
+#define ASSERT_NULL(np, fnc) ifassert((np == NULL), fnc, "node pointer is NULL");
 
 
-NODE* createNode(int type){
+NODE* createNodeCore(void){
 	NODE* new_node;
 	
 	new_node = malloc(sizeof(NODE));
-	ifassert((new_node == NULL), "createNode", "メモリ確保に失敗しました");
+	ifassert((new_node == NULL), "createNodeCore", "failed create node");
 	
-	initNode(new_node, type);
+	initNodeCore(new_node);
 	
 	return new_node;
 }
 
 
-NODE* createCopyNode(NODE* node){
-	NODE* clone_node;
+void initNodeCore(NODE* node){
+	ASSERT_NULL(node, "initNodeCore");
 	
-	clone_node = createNode(node->node_type);
-	setNodeName(clone_node, node->node_name);
-	setNodeValue(clone_node, node->node_value);
-	
-	return clone_node;
-}	
-
-
-void destroyNode(NODE* node){
-	ASSERT_NULL(node, "destroyNode");
-
-	initNode(node, 0);
-	free(node);
-}
-
-void rdestroyNode(NODE* node){
-	ASSERT_NULL(node, "rdestroyNode");
-	
-	destroyChildNodes(node);
-	destroyNode(node);
-}
-
-
-void destroyChildNodes(NODE* node){
-	NODE *np, *next_np;
-	
-	np = node->child;
-	while( np != NULL ){
-		next_np = np->sibling;
-		rdestroyNode(np);
-		np = next_np;
-	}
-	node->child = NULL;
-}
-
-
-void initNode(NODE* node, int type){
-	int i;
-	ASSERT_NULL(node, "initNode");
-
-	node->node_type = type;
-	memset(node->node_name, 0, NODE_NAME_LEN);
-	memset(node->node_value, 0, NODE_VALUE_LEN);
+	node->content = NULL;
 	node->child = NULL;
 	node->sibling = NULL;
 }
 
 
-void clearNode(NODE* node){
-	ASSERT_NULL(node, "clearNode");
-
-	setNodeName(node, "");
-	setNodeValue(node, "");
+void destroyNodeCore(NODE* node){
+	ASSERT_NULL(node, "destroyNodeCore");
+	
+	node->content = (void*)0;
+	node->child = (void*)0;
+	node->sibling = (void*)0;
+	free(node);
 }
 
 
-void setNodeType(NODE* node, int typec){
-	nullCheck(node, "setNodeType", "値がNULLです");
+void* getNodeContent(NODE* node){
+	ASSERT_NULL(node, "getNodeContent");
 	
-	node->node_type = typec;
+	return node->content;
 }
 
 
-void setNodeName(NODE* node, char* name){
-	nullCheck(node, "setNodeName", "値がNULLです");
+void setNodeContent(NODE* node, void* ptr){
+	ASSERT_NULL(node, "setNodeContent");
 	
-	strncpy(node->node_name, name, NODE_NAME_LEN - 1);
-}
-
-
-void setNodeValue(NODE* node, char* value){
-	nullCheck(node, "setNodeValue", "値がNULLです");
-	
-	strncpy(node->node_value, value, NODE_VALUE_LEN - 1);
-}
-
-
-int getNodeType(NODE* node){
-	nullCheck(node, "getNodeType", "値がNULLです");
-	
-	return node->node_type;
-}
-
-
-char* getNodeName(NODE* node, char* buf, int len){
-	nullCheck(node, "getNodeName", "値がNULLです");
-	
-	if( buf != NULL ){
-		strncpy(buf, node->node_name, len - 1);
-	}
-	return node->node_name;
-}
-
-
-char* getNodeValue(NODE* node, char* buf, int len){
-	nullCheck(node, "getNodeValue", "値がNULLです");
-	
-	if( buf != NULL ){
-		strncpy(buf, node->node_value, len - 1);
-	}
-	return node->node_value;
+	node->content = ptr;
 }
 
 
@@ -135,128 +59,100 @@ NODE* getFirstChildNode(NODE* node){
 
 
 NODE* getNextSiblingNode(NODE* node){
-	ASSERT_NULL(node, "getNextSibling");
+	ASSERT_NULL(node, "getNextSiblingNode");
 	
 	return node->sibling;
 }
 
 
-void insertLinkedNodeSibling(NODE **pre_np, NODE *new_node){
-	NODE *tmp;
-	tmp = *pre_np;
-	*pre_np = new_node;
+void insertLinkedNodeSibling(NODE** prev_np, NODE* new_node){
+	NODE* tmp;
+	ifassert((prev_np == NULL),
+		"insertLinkedNodeSibling", "Previous Node Pointer is NULL");
+	ifassert((new_node == NULL),
+		"insertLinkedNodeSibling", "Insert Node Pointer is NULL");
+	
+	tmp = *prev_np;
+	*prev_np = new_node;
 	new_node->sibling = tmp;
 }
 
 
-NODE* removeLinkedNodeSibling(NODE **pre_np){
-	NODE *tmp;
-	tmp = *pre_np;
-	*pre_np = tmp->sibling;
+NODE* removeLinkedNodeSibling(NODE** prev_np){
+	NODE* tmp;
+	ifassert((prev_np == NULL),
+		"removeLinkedNodeSibling", "Previous Node Pointer is NULL");
+	
+	tmp = *prev_np;
+	*prev_np = tmp->sibling;
 	tmp->sibling = NULL;
-}	
-
-
-void appendChildNode(NODE* node, NODE* append){
-	NODE **target;
-	ASSERT_NULL(node, "appendChildNode");
-	
-	target = &(node->child);
-	while( *target != NULL ){
-		target = &((*target)->sibling);
-	}
-	
-	*target = append;
 }
 
 
-void insertChildNode(NODE* node, NODE* new_node, NODE* pos){
-	NODE **target;
-	ASSERT_NULL(node, "insertChildNode");
-	ASSERT_NULL(new_node, "insertChildNode");
-	ifassert((pos == NULL), "insertChildNode", "posがNULLです");
+NODE** getLinkedNodeSibidxPNP(NODE* node, int idx){
+	NODE** pnp;
+	int i;
+	ASSERT_NULL(node, "getLinkedNodeSibidxPNP");
+	ifassert((idx < 0), "getLinkedNodeSibidx", "index value is invalid");
 	
-	target = &(node->child);
-	while( *target != NULL ){
-		if( *target == pos ){
-			insertLinkedNodeSibling(target, new_node);
-			break;
-		}
-		target = &((*target)->sibling);
+	pnp = &(node->child);
+	for( i=0; i<idx; i++){
+		if( *pnp == NULL ) return NULL;
+		pnp = &((*pnp)->sibling);
 	}
+	
+	return pnp;
 }
 
 
-void removeChildNode(NODE* node, NODE* pos){
-	NODE **pre;
-	ASSERT_NULL(node, "insertChildNode");
+NODE** getLinkedNodeSibtailPNP(NODE* node){
+	NODE** pnp;
+	ASSERT_NULL(node, "getLinkedNodeSibtailPNP");
 	
-	pre = &(node->child);
-	while( *pre != NULL ){
-		if( *pre == pos ){
-			removeLinkedNodeSibling(pre);
-			break;
-		}
-		pre = &((*pre)->sibling);
+	pnp = &(node->child);
+	while( *pnp != NULL ){
+		pnp = &((*pnp)->sibling);
 	}
+	
+	return pnp;
 }
-		
+
+
+int getChildNodeIndex(NODE* node, NODE* target){
+	NODE* np;
+	int cnt;
+	ASSERT_NULL(node, "getChildNodeIndex");
+	ifassert((target == NULL), "getChildNodeIndex", "target node pointer is NULL");
+	
+	np = getFirstChildNode(node);
+	cnt = 0;
+	while( np != NULL ){
+		if( np == target ) return cnt;
+		np = getNextSiblingNode(np);
+		cnt++;
+	}
+	
+	return -1;
+}
+
 
 int getChildNodeCount(NODE* node){
-	int cnt;
 	NODE* np;
+	int cnt;
 	ASSERT_NULL(node, "getChildNodeCount");
 	
-	np = node->child;
+	np = getFirstChildNode(node);
+	cnt = 0;
 	while( np != NULL ){
 		cnt++;
-		np = np->sibling;
+		np = getNextSiblingNode(np);
 	}
 	
 	return cnt;
 }
-	
 
-int getChildNodeList(NODE* node, NODE* list[], int len){
-	int cnt = 0;
-	NODE* np;
-	ASSERT_NULL(node, "getChildNodeList");
-	
-	np = node->child;
-	while( np != NULL ){
-		list[cnt] = np;
-		cnt++;
-		np = np->sibling;
-	}
-	
-	return cnt;
+
+void printNodeCoreInfo(NODE* node){
+	printf("[%p](%p, %p, %p)", 
+		node, node->content, node->child, node->sibling);
 }
-	
-	
-void printNodeInfo(NODE* node, int indent){
-	int i;
-	nullCheck(node, "printNodeInfo", "値がnullです");
-	
-	PRINTINDENT(indent);
-	printf("node type: %d\n", node->node_type);
-	PRINTINDENT(indent);
-	printf("node name: %s\n", node->node_name);
-	PRINTINDENT(indent);
-	printf("node value: %s\n", node->node_value);
-}
-	
-	
-void traceNodes(NODE* node, int indent){
-	NODE* np;
-	ASSERT_NULL(node, "traceNodes");
-	
-	printNodeInfo(node, indent);
-	
-	np = getFirstChildNode(node); /* np = node->child */
-	while( np != NULL ){
-		traceNodes(np, indent + 2);
-		np = getNextSiblingNode(np); /* np = np->sibling */
-	}
-}
-	
-	

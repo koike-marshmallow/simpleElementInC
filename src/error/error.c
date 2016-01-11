@@ -3,6 +3,7 @@
 #include "error.h"
 
 void fnerror(char* fnc, char* msg){
+	fflush(stdout);
 	fprintf(stderr, "%s: %s\n", fnc, msg);
 	exit(1);
 }
