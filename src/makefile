@@ -27,10 +27,10 @@ simpleNode.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simp
 	cc -c $(src_simpleNode_c)
 simpleElement.o : $(src_nodeCore_h) $(src_simpleNode_h) $(src_simpleElement_h) $(src_simpleElement_c)
 	cc -c $(src_simpleElement_c)
-error.o : error/error.h error/error.c
-	cc -c error/error.c
-stringBuffer.o : error/error.h stringBuffer/stringBuffer.h stringBuffer/stringBuffer.c
-	cc -c stringBuffer/stringBuffer.c
+error.o : $(src_error_h) $(src_error_c)
+	cc -c $(src_error_c)
+stringBuffer.o : $(src_error_h) $(src_stringBuffer_h) 
+	cc -c $(src_stringBuffer_c)
 markupTransformer.o : $(src_markupTransformer_c) $(src_markupTransformer_h) $(src_nodeCore_h) $(src_simpleNode_h) $(src_simpleElement_h) $(src_stringBuffer_h) 
 	cc -c $(src_markupTransformer_c)
 
@@ -45,14 +45,14 @@ objs_testSimpleElement = testSimpleElement.o nodeCore.o nodeIterator.o simpleNod
 testSimpleElement : $(objs_testSimpleElement)
 	cc -o testSimpleElement $(objs_testSimpleElement)
 
-testStringBuffer.o : stringBuffer/stringBuffer.h testStringBuffer.c
+testStringBuffer.o : $(src_stringBuffer_h) testStringBuffer.c
 	cc -c testStringBuffer.c
-testStringBuffer : testStringBuffer.o stringBuffer.o error.o
-	cc -o testStringBuffer testStringBuffer.o stringBuffer.o error.o
+objs_testStringBuffer = testStringBuffer.o stringBuffer.o error.o
+testStringBuffer : $(objs_testStringBuffer)
+	cc -o testStringBuffer $(objs_testStringBuffer)
 testMarkupTransformer.o : $(src_stringBuffer_h) $(src_nodeCore_h) $(src_simpleElement_h) $(src_markupTransformer_h)  testMarkupTransformer.c
 	cc -c testMarkupTransformer.c
 objs_testMarkupTransformer = testMarkupTransformer.o nodeCore.o simpleNode.o simpleElement.o error.o stringBuffer.o markupTransformer.o
 testMarkupTransformer : $(objs_testMarkupTransformer)
 	cc -o testMarkupTransformer $(objs_testMarkupTransformer)
-
 
