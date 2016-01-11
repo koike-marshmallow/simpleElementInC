@@ -50,6 +50,8 @@ NODE* removeChildNode(NODE* node, int idx);
 
 /* debug */
 void printNodeInfo(NODE* node, int indent);
+void printNodeInfoShort(NODE* node, int indent);
 void traceNodes(NODE* node, int indent);
+void traceNodesLong(NODE* node, int indent);
 
 #endif

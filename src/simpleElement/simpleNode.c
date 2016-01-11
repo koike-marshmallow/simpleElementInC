@@ -158,6 +158,7 @@ void insertChildNode(NODE* node, int idx, NODE* new_node){
 	NODE **prev;
 	ASSERT_NULL(node, "insertChildNode");
 	ASSERT_NULL(new_node, "insertChildNode");
+	ifassert((idx < 0), "insertChildNode", "位置を正しく指定してください");
 	
 	prev = getLinkedNodeSibidxPNP(node, idx);
 	ifassert((prev == NULL), "insertChildNode", "挿入位置を特定できません");
@@ -168,6 +169,7 @@ void insertChildNode(NODE* node, int idx, NODE* new_node){
 NODE* removeChildNode(NODE* node, int idx){
 	NODE **prev;
 	ASSERT_NULL(node, "deleteChildNode");
+	ifassert((idx < 0), "removeChildNode", "位置を正しく指定してください");
 	
 	prev = getLinkedNodeSibidxPNP(node, idx);
 	ifassert((prev == NULL), "deleteChildNode", "削除位置を特定できません");
@@ -190,6 +192,16 @@ void printNodeInfo(NODE* node, int indent){
 	PRINTINDENT(indent);
 	printf("node value: %s\n", content->value);
 }
+
+
+void printNodeInfoShort(NODE* node, int indent){
+	NCONTENT* content;
+	content = getNodeContent(node);
+	ASSERT_CONTENT_NULL(content, "printNodeInfoShort");
+	
+	printf("(%d, %s, \"%s\")",
+		content->type, content->name, content->value);
+}
 	
 	
 void traceNodes(NODE* node, int indent){
@@ -202,5 +214,24 @@ void traceNodes(NODE* node, int indent){
 	while( np != NULL ){
 		traceNodes(np, indent + 2);
 		np = getNextSiblingNode(np); /* np = np->sibling */
+	}
+}
+
+
+void traceNodesLong(NODE* node, int indent){
+	int i;
+	NODE* np;
+	ASSERT_NULL(node, "traceNodesLong");
+	
+	PRINTINDENT(indent);
+	printf("<");
+	printNodeCoreInfo(node);
+	printNodeInfoShort(node, 0);
+	printf(">\n");
+	
+	np = getFirstChildNode(node);
+	while( np != NULL ){
+		traceNodesLong(np, indent + 2);
+		np = getNextSiblingNode(np);
 	}
 }

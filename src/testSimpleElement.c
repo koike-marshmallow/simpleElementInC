@@ -17,7 +17,7 @@ int main(void){
 	addText(test, "これはテキストです");
 	appendChildNode(root, test);
 	
-	traceNodes(root, 0);
+	traceNodesLong(root, 0);
 	deleteAttribute(test, "これが属性");
 	
 #if 0
@@ -33,6 +33,8 @@ int main(void){
 	traceNodes(root, 0);
 	
 #endif
+	
+	traceNodesLong(root, 0);
 	/*rdestroyNode(root);*/
 	return 0;
 }

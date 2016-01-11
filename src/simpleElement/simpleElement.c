@@ -56,7 +56,8 @@ void deleteAttribute(NODE* element, char* name){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( strcmp(getNodeName(itr, NULL, 0), name) == 0 ){
-			removeChildNode(element, getChildNodeIndex(itr));
+			printNodeCoreInfo(itr);
+			removeChildNode(element, getChildNodeIndex(element, itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -71,7 +72,7 @@ void clearAttribute(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_ATTRIBUTE ){
-			removeChildNode(element, getChildNodeIndex(itr));
+			removeChildNode(element, getChildNodeIndex(element, itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -154,7 +155,7 @@ void clearText(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_TEXT ){
-			removeChildNode(element, getChildNodeIndex(itr));
+			removeChildNode(element, getChildNodeIndex(element, itr));
 			destroyNode(itr);
 		}
 		itr = next_itr;
@@ -176,7 +177,7 @@ void destroyChildElements(NODE* element){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_ELEMENT ){
-			removeChildNode(element, getChildNodeIndex(itr));
+			removeChildNode(element, getChildNodeIndex(element, itr));
 			rdestroyNode(itr);
 		}
 		itr = next_itr;

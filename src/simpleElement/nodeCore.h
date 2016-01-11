@@ -25,7 +25,9 @@ NODE* removeLinkedNodeSibling(NODE** prev_np);
 NODE** getLinkedNodeSibidxPNP(NODE* node, int idx);
 NODE** getLinkedNodeSibtailPNP(NODE* node);
 
-int getChildNodeIdx(NODE* node, NODE* target);
+int getChildNodeIndex(NODE* node, NODE* target);
 int getChildNodeCount(NODE* node);
+
+void printNodeCoreInfo(NODE* node);
 
 #endif

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "../error/error.h"
 #include "nodeCore.h"
@@ -92,6 +93,7 @@ NODE** getLinkedNodeSibidxPNP(NODE* node, int idx){
 	NODE** pnp;
 	int i;
 	ASSERT_NULL(node, "getLinkedNodeSibidxPNP");
+	ifassert((idx < 0), "getLinkedNodeSibidx", "index value is invalid");
 	
 	pnp = &(node->child);
 	for( i=0; i<idx; i++){
@@ -147,4 +149,10 @@ int getChildNodeCount(NODE* node){
 	}
 	
 	return cnt;
+}
+
+
+void printNodeCoreInfo(NODE* node){
+	printf("[%p](%p, %p, %p)", 
+		node, node->content, node->child, node->sibling);
 }
