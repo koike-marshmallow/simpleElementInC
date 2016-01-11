@@ -1,5 +1,5 @@
 NODE* createElement(char* name);
-NODE* destroyElement(NODE* element);
+void destroyElement(NODE* element);
 
 NODE* addAttribute(NODE* element, char* name, char* value);
 void deleteAttribute(NODE* element, char* name);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "simpleElement/nodeCore.h"
+#include "simpleElement/simpleNode.h"
 #include "simpleElement/simpleElement.h"
 
 int main(void){
@@ -29,6 +30,12 @@ int main(void){
 	printf("getattrv: %s\n", namelist[1]);
 	
 	traceNodes(root, 0);
-	rdestroyNode(root);
+	
+	destroyChildElements(root);
+	
+	traceNodes(root, 0);
+	
+	
+	destroyElement(root);
 	return 0;
 }
