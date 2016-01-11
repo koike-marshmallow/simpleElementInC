@@ -17,10 +17,9 @@ int main(void){
 	addText(test, "これはテキストです");
 	appendChildNode(root, test);
 	
-	traceNodesLong(root, 0);
+	traceNodes(root, 0);
 	deleteAttribute(test, "これが属性");
 	
-#if 0
 	cnt = getAttributeNameList(test, (char*)namelist, 8, 64);
 	for( i=0; i<cnt; i++){
 		printf("%d: %s\n", i, namelist[i]);
@@ -32,9 +31,8 @@ int main(void){
 	
 	traceNodes(root, 0);
 	
-#endif
 	
-	traceNodesLong(root, 0);
-	/*rdestroyNode(root);*/
+	traceNodes(root, 0);
+	rdestroyNode(root);
 	return 0;
 }

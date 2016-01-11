@@ -56,7 +56,6 @@ void deleteAttribute(NODE* element, char* name){
 	while( itr != NULL ){
 		next_itr = getNextSiblingNode(itr);
 		if( strcmp(getNodeName(itr, NULL, 0), name) == 0 ){
-			printNodeCoreInfo(itr);
 			removeChildNode(element, getChildNodeIndex(element, itr));
 			destroyNode(itr);
 		}
