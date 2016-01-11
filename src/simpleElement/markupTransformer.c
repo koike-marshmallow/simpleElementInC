@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "nodeCore.h"
+#include "simpleNode.h"
 #include "simpleElement.h"
 #include "../stringBuffer/stringBuffer.h"
 
