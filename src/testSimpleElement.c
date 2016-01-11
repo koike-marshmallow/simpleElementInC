@@ -31,8 +31,11 @@ int main(void){
 	
 	traceNodes(root, 0);
 	
+	destroyChildElements(root);
 	
 	traceNodes(root, 0);
-	rdestroyNode(root);
+	
+	
+	destroyElement(root);
 	return 0;
 }

@@ -44,7 +44,7 @@ int main(void){
 	insertChildNode(n1, getChildNodeIndex(n1, n2), n5);
 	testNodeIterator(n0);
 	
-	rdestroyNode(n0);
+	destroyNodeTree(n0);
 	
 
 	return 0;

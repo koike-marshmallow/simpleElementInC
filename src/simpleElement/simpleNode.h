@@ -32,7 +32,7 @@ void initNode(NODE* node, int type);
 
 /* Node destroyer */
 void destroyNode(NODE* node);
-void rdestroyNodes(NODE* node);
+void destroyNodeTree(NODE* node);
 void destroyChildNodes(NODE* node);
 
 /* Node content controller */

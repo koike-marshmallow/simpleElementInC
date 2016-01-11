@@ -56,7 +56,7 @@ void destroyNode(NODE* node){
 }
 
 
-void rdestroyNode(NODE* node){
+void destroyNodeTree(NODE* node){
 	ASSERT_NULL(node, "rdestroyNode");
 	
 	destroyChildNodes(node);
@@ -70,7 +70,7 @@ void destroyChildNodes(NODE* node){
 	np = node->child;
 	while( np != NULL ){
 		next_np = np->sibling;
-		rdestroyNode(np);
+		destroyNodeTree(np);
 		np = next_np;
 	}
 	node->child = NULL;

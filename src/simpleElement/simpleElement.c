@@ -22,7 +22,7 @@ NODE* createElement(char* name){
 
 
 void destroyElement(NODE* element){
-	rdestroyNode(element);
+	destroyNodeTree(element);
 }
 
 
@@ -177,7 +177,7 @@ void destroyChildElements(NODE* element){
 		next_itr = getNextSiblingNode(itr);
 		if( getNodeType(itr) == NODE_ELEMENT ){
 			removeChildNode(element, getChildNodeIndex(element, itr));
-			rdestroyNode(itr);
+			destroyNodeTree(itr);
 		}
 		itr = next_itr;
 	}
