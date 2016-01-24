@@ -86,7 +86,7 @@ NODE* jnodeSetJsonData(NODE* jnode, JSONDATA* jdata){
 	NULL_CHECK(jnode, "jnodeSetJsonData");
 	ifassert((jdata == NULL), "jnodeSetJsonData", "データがnullです");
 	
-	ntype = jdataGetType(jdata);
+	ntype = jnodeGetNodeType(jnode);
 	if( ntype == JNODE_NULL || ntype == JNODE_VALUE ){
 		jcontent = getNodeContent(jnode);
 		jcontent->ntype = JNODE_VALUE;
@@ -271,7 +271,7 @@ void printJsonNode(NODE* jnode, int indent){
 	}
 	
 	PRINT_INDENT(indent);
-	printf("node type  : %s\n", type);
+	printf("node type  : %s[%d]\n", type, jnodeGetNodeType(jnode));
 	PRINT_INDENT(indent);
 	printf("node value : %s\n", data);
 	
