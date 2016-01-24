@@ -4,7 +4,7 @@
 struct s_jsondata {
 	int dtype;
 	void* value;
-}
+};
 
 #define JDTYPE_NULL 0
 #define JDTYPE_INTEGER 1
@@ -23,18 +23,19 @@ typedef struct s_jsondata JSONDATA;
 
 typedef int JD_TYPE_INT;
 typedef double JD_TYPE_FLOAT;
-typedef itn JD_TYPE_BOOLEAN;
+typedef int JD_TYPE_BOOL;
 
 
-JSONDATA* createJsonData();
+JSONDATA* createJsonData(void);
 void destroyJsonData(JSONDATA* data);
 
 void clearJsonData(JSONDATA* data);
 
+JSONDATA* jdataSetNull(JSONDATA* data);
 JSONDATA* jdataSetInt(JSONDATA* data, JD_TYPE_INT val);
 JSONDATA* jdataSetFloat(JSONDATA* data, JD_TYPE_FLOAT val);
 JSONDATA* jdataSetString(JSONDATA* data, char* str);
-JSONDATA* jdataSetBool(JSONDATA* data, JD_TYPE_BOOLEAN val);
+JSONDATA* jdataSetBool(JSONDATA* data, JD_TYPE_BOOL val);
 
 int jdataGetType(JSONDATA* data);
 JD_TYPE_INT jdataGetInt(JSONDATA* data);

@@ -16,6 +16,8 @@ src_simpleElement_c = simpleElement/simpleElement.c
 src_markupTransformer_h = simpleElement/markupTransformer.h
 src_markupTransformer_c = simpleElement/markupTransformer.c
 
+src_jsonData_h = jsonNode/jsonData.h
+src_jsonData_c = jsonNode/jsonData.c
 
 
 ## module rules
@@ -33,6 +35,9 @@ stringBuffer.o : $(src_error_h) $(src_stringBuffer_h)
 	cc -c $(src_stringBuffer_c)
 markupTransformer.o : $(src_markupTransformer_c) $(src_markupTransformer_h) $(src_nodeCore_h) $(src_simpleNode_h) $(src_simpleElement_h) $(src_stringBuffer_h) 
 	cc -c $(src_markupTransformer_c)
+jsonData.o : $(src_jsonData_h) $(src_jsonData_c) $(src_error_h)
+	cc -c $(src_jsonData_c)
+
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
 	cc -c testSimpleNode.c
@@ -55,4 +60,10 @@ testMarkupTransformer.o : $(src_stringBuffer_h) $(src_nodeCore_h) $(src_simpleEl
 objs_testMarkupTransformer = testMarkupTransformer.o nodeCore.o simpleNode.o simpleElement.o error.o stringBuffer.o markupTransformer.o
 testMarkupTransformer : $(objs_testMarkupTransformer)
 	cc -o testMarkupTransformer $(objs_testMarkupTransformer)
+	
+testJsonData.o : $(src_jsonNode_h) testJsonData.c
+	cc -c testJsonData.c
+objs_testJsonData = error.o jsonData.o testJsonData.o
+testJsonData : $(objs_testJsonData)
+	cc -o testJsonData $(objs_testJsonData)
 
