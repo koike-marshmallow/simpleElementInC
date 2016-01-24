@@ -29,6 +29,8 @@ typedef itn JD_TYPE_BOOLEAN;
 JSONDATA* createJsonData();
 void destroyJsonData(JSONDATA* data);
 
+void clearJsonData(JSONDATA* data);
+
 JSONDATA* jdataSetInt(JSONDATA* data, JD_TYPE_INT val);
 JSONDATA* jdataSetFloat(JSONDATA* data, JD_TYPE_FLOAT val);
 JSONDATA* jdataSetString(JSONDATA* data, char* str);
