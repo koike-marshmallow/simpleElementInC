@@ -70,4 +70,11 @@ testJsonData.o : $(src_jsonNode_h) testJsonData.c
 objs_testJsonData = error.o jsonData.o testJsonData.o
 testJsonData : $(objs_testJsonData)
 	cc -o testJsonData $(objs_testJsonData)
+testJsonNode.o : $(src_nodeCore_h) $(src_jsonData_h) $(src_jsonNode_h) testJsonNode.c
+	cc -c testJsonNode.c
+objs_testJsonNode = error.o jsonData.o jsonNode.o nodeCore.o testJsonNode.o
+testJsonNode : $(objs_testJsonNode)
+	cc -o testJsonNode $(objs_testJsonNode)
+
+
 

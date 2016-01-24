@@ -51,9 +51,9 @@ int checkJsonNodeType(NODE* jnode, int type);
 void printJsonNode(NODE* jnode, int indent);
 void traceJsonNodeTree(NODE* root, int level);
 
-#define JN_INTEGER(val) jnodeSetJsonData(createJsonNode(), JD_INTEGER(val));
-#define JN_FLOAT(val) jnodeSetJsonData(createJsonNode(), JD_FLOAT(val));
-#define JN_STRING(str) jnodeSetJsonData(createJsonNode(), JD_STRING(str));
-#define JN_BOOLEAN(val) jnodeSetJsonData(createJsonNode(), JD_BOOLEAN(val));
+#define JN_INTEGER(val) jnodeSetJsonData(createJsonNode(), JD_INTEGER(val))
+#define JN_FLOAT(val) jnodeSetJsonData(createJsonNode(), JD_FLOAT(val))
+#define JN_STRING(str) jnodeSetJsonData(createJsonNode(), JD_STRING(str))
+#define JN_BOOLEAN(val) jnodeSetJsonData(createJsonNode(), JD_BOOLEAN(val))
 
 #endif

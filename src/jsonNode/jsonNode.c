@@ -86,7 +86,7 @@ NODE* jnodeSetJsonData(NODE* jnode, JSONDATA* jdata){
 	NULL_CHECK(jnode, "jnodeSetJsonData");
 	ifassert((jdata == NULL), "jnodeSetJsonData", "データがnullです");
 	
-	ntype = jnodeGetType(jdata);
+	ntype = jdataGetType(jdata);
 	if( ntype == JNODE_NULL || ntype == JNODE_VALUE ){
 		jcontent = getNodeContent(jnode);
 		jcontent->ntype = JNODE_VALUE;
@@ -175,18 +175,18 @@ char* jnodeGetName(NODE* jnode){
 	ifassert(!checkJsonNodeType(jnode, JNODE_NAMENODE), 
 		"jnodeGetName", "NAMENODEではありません");
 	
-	return jdataGetString(((JCONTENT*)getNodeConent(jnode))->data);
+	return jdataGetString(((JCONTENT*)getNodeContent(jnode))->data);
 }
 
 
 void jnodeAppendChild(NODE* jnode, NODE* apnd){
 	NULL_CHECK(jnode, "jnodeAppendChild");
 	
-	switch( jnodeGetType(jnode) ){
+	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_ARRAY:
 	case JNODE_OBJECT:
 	case JNODE_NAMENODE:
-		insertLinkedNodeSibing(getLinkedNodeSibtailPNP(jnode), apnd);
+		insertLinkedNodeSibling(getLinkedNodeSibtailPNP(jnode), apnd);
 		break;
 	default:
 		fnerror("jnodeAppendChild", "OBJECT/ARRAY/NAMENODEではありません");
@@ -199,7 +199,7 @@ void jnodeInsertChild(NODE* jnode, int idx, NODE* apnd){
 	NODE** pnp;
 	NULL_CHECK(jnode, "jnodeInsertChild");
 	
-	switch( jnodeGetType(jnode) ){
+	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_ARRAY:
 	case JNODE_OBJECT:
 		pnp = getLinkedNodeSibidxPNP(jnode, idx);
@@ -217,7 +217,7 @@ NODE* jnodeRemoveChild(NODE* jnode, int idx){
 	NODE** pnp;
 	NULL_CHECK(jnode, "jnodeRemoveChild");
 	
-	switch( jnodeGetType(jnode) ){
+	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_ARRAY:
 	case JNODE_OBJECT:
 	case JNODE_NAMENODE:
@@ -247,7 +247,7 @@ void printJsonNode(NODE* jnode, int indent){
 	NULL_CHECK(jnode, "printJsonNode");
 	
 	jcontent = getNodeContent(jnode);
-	switch( jnodeGetType(jnode) ){
+	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_VALUE:
 		strcpy(type, "VALUE");
 		jnodeGetDataString(jnode, data, 128);
@@ -258,11 +258,11 @@ void printJsonNode(NODE* jnode, int indent){
 		break;
 	case JNODE_ARRAY:
 		strcpy(type, "ARRAY");
-		strcpy(data, "");
+		sprintf(data, "(NODE COUNT (%d))", getChildNodeCount(jnode));
 		break;
 	case JNODE_OBJECT:
 		strcpy(type, "OBJECT");
-		strcpy(data, "");
+		sprintf(data, "(NODE COUNT (%d))", getChildNodeCount(jnode));
 		break;
 	case JNODE_NULL:
 		strcpy(type, "NULL NODE");
@@ -287,7 +287,7 @@ void traceJsonNodeTree(NODE* root, int level){
 	for( np = getFirstChildNode(root);
 	np != NULL;
 	np = getNextSiblingNode(np) ){
-		printJsonNode(np, level + 1);
+		traceJsonNodeTree(np, level + 1);
 	}
 }
 	
