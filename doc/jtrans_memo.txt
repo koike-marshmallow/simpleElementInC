@@ -1,0 +1,107 @@
+jsonTransformer.h
+
+transformObject(NODE* obj);
+transformArray(NODE* ary);
+transformNameNode(NODE* name_n);
+transformValue(NODE* val);
+
+transformNode(NODE* node);
+
+void transformObject(NODE* obj){
+	int comma;
+	NODE* np;
+	printf("{");
+	
+	comma = FALSE;
+	for( np = getFirstChildNode();
+	np != NULL;
+	np = getNextSiblingNode() ){
+		if( checkJsonNodeType(JNODE_NAMENODE) ){
+			if( comma ) printf(", ");
+			transformNameNode(np);
+			comma = TRUE;
+		}else{
+			TRANS_WARN(np, level, "不正なメンバーノードを検出しました");
+		}
+	}
+	
+	printf("}");
+}
+
+
+void transformNameNode(NODE* name_n){
+	NODE* np;
+	printf("\"%s\": ", jnodeGetName(name_n));
+	
+	transformNode(getFirstChildNode(name_n));
+}
+
+
+void transformDataNode(NODE* node){
+	switch( jnodeGetNodeType(node) ){
+	case JNODE_VALUE:
+		transformValueNode(node);
+		break;
+	case JNODE_OBJECT:
+		transformObjectNode(node);
+		break;
+	case JNODE_ARRAY:
+		transformArrayNode(node);
+		break;
+	case JNODE_NULL:
+		print("null");
+		break;
+	case JNODE_NAMENODE:
+		TRANS_WARN(np, level, "予期せぬネームノードを検出しました");
+		break;
+	default:
+		TRANS_WARN(np, level, "未定義のデータノードを検出しました");
+		break;
+	}
+}
+
+
+void transformArrayNode(NODE* ary){
+	int comma = FALSE;
+	NODE* np;
+	printf("[");
+	
+	for( np = getFirstChildNode(node);
+	np != NULL;
+	np = getNextSiblingNode(np) ){
+		if( comma ) printf(", ");
+		transformDataNode(np);
+		comma = TRUE;
+	}
+}
+
+
+void transformValueNode(NODE* val){
+	JSONDATA* data;
+	
+	data = jnodeGetJsonData(val);
+	switch( jdataGetType(data) ){
+	case JDTYPE_INTEGER:
+		printf("%d", jdataGetInt(data));
+		break;
+	case JDTYPE_FLOAT:
+		printf("%f", jdataGetFloat(data));
+		break;
+	case JDTYPE_STRING:
+		printf("\"%s\"", jdataGetString(data));
+		break;
+	case JDTYPE_BOOLEAN:
+		if( jdataGetBool(data) ) printf("true");
+		else printf("false");
+		break;
+	case JDTYPE_NULL
+		printf("null");
+		break;
+	default:
+		TRANS_WARN(val, level, "不正な値ノードが検出されました");
+		break;
+	}
+}
+
+
+
