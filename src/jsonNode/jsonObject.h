@@ -2,11 +2,15 @@
 #define JSONOBJECT_H
 
 #ifndef NODECORE_H
-# include "../simpleElement/nodeCore.h"
+#	include "../simpleElement/nodeCore.h"
+#endif
+
+#ifndef JSONDATA_H
+#	include "jsonData.h"
 #endif
 
 #ifndef JSONNODE_H
-# include "jsonNode.h"
+#	include "jsonNode.h"
 #endif
 
 
@@ -16,7 +20,7 @@ NODE* createJsonArray();
 void destroyJsonNodeTree(NODE* jnode);
 void destroyJsonChildNodes(NODE* jnode);
 void destroyJsonObject(NODE* jobj);
-void destroyJsonArray(NODE* jary);
+/*void destroyJsonArray(NODE* jary);*/
 
-void addJsonObjectMember(char* name, JCONTENT content);
+void addJsonObjectMember(char* name, JSONDATA* );
 
