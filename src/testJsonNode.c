@@ -40,5 +40,7 @@ int main(void){
 	
 	traceJsonNodeTree(obj0, 0);
 	
+	destroyJsonNodeTree(obj0);
+	
 	return 0;
 }

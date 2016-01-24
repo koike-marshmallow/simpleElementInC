@@ -20,6 +20,8 @@ src_jsonData_h = jsonNode/jsonData.h
 src_jsonData_c = jsonNode/jsonData.c
 src_jsonNode_h = jsonNode/jsonNode.h
 src_jsonNode_c = jsonNode/jsonNode.c
+src_jsonObject_h = jsonNode/jsonObject.h
+src_jsonObject_c = jsonNode/jsonObject.c
 
 
 ## module rules
@@ -41,6 +43,8 @@ jsonData.o : $(src_jsonData_h) $(src_jsonData_c) $(src_error_h)
 	cc -c $(src_jsonData_c)
 jsonNode.o : $(src_jsonNode_h) $(src_jsonNode_c) $(src_jsonData_h) $(src_error_h) $(src_nodeCore_h)
 	cc -c $(src_jsonNode_c)
+jsonObject.o : $(src_jsonObject_h) $(src_jsonObject_c) $(src_jsonNode_h) $(src_nodeCore_h) $(src_error_h)
+	cc -c $(src_jsonObject_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
@@ -75,6 +79,11 @@ testJsonNode.o : $(src_nodeCore_h) $(src_jsonData_h) $(src_jsonNode_h) testJsonN
 objs_testJsonNode = error.o jsonData.o jsonNode.o nodeCore.o testJsonNode.o
 testJsonNode : $(objs_testJsonNode)
 	cc -o testJsonNode $(objs_testJsonNode)
+testJsonObject.o : $(src_jsonNode_h) $(src_jsonObject_h) testJsonObject.c
+	cc -c testJsonObject.c
+objs_testJsonNode = error.o nodeCore.o jsonData.o jsonNode.o jsonObject.o testJsonObject.o
+testJsonObject : $(objs_testJsonNode)
+	cc -o testJsonObject $(objs_testJsonNode)
 
 
 

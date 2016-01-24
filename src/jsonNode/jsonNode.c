@@ -181,6 +181,7 @@ char* jnodeGetName(NODE* jnode){
 
 void jnodeAppendChild(NODE* jnode, NODE* apnd){
 	NULL_CHECK(jnode, "jnodeAppendChild");
+	ifassert((apnd == NULL), "jnodeAppendChild", "NULLの追加は許可されていません");
 	
 	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_ARRAY:
@@ -198,6 +199,7 @@ void jnodeAppendChild(NODE* jnode, NODE* apnd){
 void jnodeInsertChild(NODE* jnode, int idx, NODE* apnd){
 	NODE** pnp;
 	NULL_CHECK(jnode, "jnodeInsertChild");
+	ifassert((apnd == NULL), "jnodeInsertChild", "NULLの追加は許可されていません");
 	
 	switch( jnodeGetNodeType(jnode) ){
 	case JNODE_ARRAY:
@@ -222,13 +224,35 @@ NODE* jnodeRemoveChild(NODE* jnode, int idx){
 	case JNODE_OBJECT:
 	case JNODE_NAMENODE:
 		pnp = getLinkedNodeSibidxPNP(jnode, idx);
-		ifassert((pnp == NULL), "jnodeRemovetChild", "削除位置を特定できません");
+		ifassert((pnp == NULL), "jnodeRemoveChild", "削除位置を特定できません");
 		return removeLinkedNodeSibling(pnp);
 	default:
-		fnerror("jnodeAppendChild", "OBJECT/ARRAY/NAMENODEではありません");
+		fnerror("jnodeRemoveChild", "OBJECT/ARRAY/NAMENODEではありません");
+		break;
+	}
+	return NULL;
+}
+
+
+void jnodeClearChild(NODE* jnode){
+	NODE** pnp;
+	NULL_CHECK(jnode, "jnodeClearChild");
+	
+	switch( jnodeGetNodeType(jnode) ){
+	case JNODE_ARRAY:
+	case JNODE_OBJECT:
+	case JNODE_NAMENODE:
+		pnp = getLinkedNodeSibidxPNP(jnode, 0);
+		while( *pnp != NULL ){
+			removeLinkedNodeSibling(pnp);
+		}
+		break;
+	default:
+		fnerror("jnodeClearChild", "OBJECT/ARRAY/NAMENODEではありません");
 		break;
 	}
 }
+			
 
 
 int checkJsonNodeType(NODE* jnode, int type){
