@@ -18,6 +18,8 @@ src_markupTransformer_c = simpleElement/markupTransformer.c
 
 src_jsonData_h = jsonNode/jsonData.h
 src_jsonData_c = jsonNode/jsonData.c
+src_jsonNode_h = jsonNode/jsonNode.h
+src_jsonNode_c = jsonNode/jsonNode.c
 
 
 ## module rules
@@ -37,6 +39,8 @@ markupTransformer.o : $(src_markupTransformer_c) $(src_markupTransformer_h) $(sr
 	cc -c $(src_markupTransformer_c)
 jsonData.o : $(src_jsonData_h) $(src_jsonData_c) $(src_error_h)
 	cc -c $(src_jsonData_c)
+jsonNode.o : $(src_jsonNode_h) $(src_jsonNode_c) $(src_jsonData_h) $(src_error_h) $(src_nodeCore_h)
+	cc -c $(src_jsonNode_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c

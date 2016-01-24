@@ -25,6 +25,9 @@ int main(void){
 	jdataSetNull(dat1);
 	printJsonData(dat1);
 	
+	printJsonData(JD_STRING("valvalval"));
+	printJsonData(JD_FLOAT(32.865));
+	
 	destroyJsonData(dat1);
 
 	return 0;

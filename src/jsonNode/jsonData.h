@@ -47,9 +47,9 @@ void* jdataGetValuePointer(JSONDATA* data);
 int isJsonDataNull(JSONDATA* data);
 int checkJsonDataType(JSONDATA* data, int type);
 
-#define JD_INTEGER(val) jdataSetInt(createJsonData(), val);
-#define JD_FLOAT(val) jdataSetFloat(createJsonData(), val);
-#define JD_STRING(str) jdataSetString(createJsonData(), str);
-#define JD_BOOLEAN(val) jdataSetBool(createJsonData(), val);
+#define JD_INTEGER(val) jdataSetInt(createJsonData(), val)
+#define JD_FLOAT(val) jdataSetFloat(createJsonData(), val)
+#define JD_STRING(str) jdataSetString(createJsonData(), str)
+#define JD_BOOLEAN(val) jdataSetBool(createJsonData(), val)
 
 #endif
