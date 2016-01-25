@@ -1,0 +1,82 @@
+struct s_htmldoc {
+	NODE* e_html;
+	NODE* e_head;
+	NODE* e_body;
+};
+typedef struct s_htmldoc HTMLDOC;
+
+typedef NODE* ELEMENT;
+
+/*
+HTMLDOC* createHtmlDocument(void){
+	HTMLDOC *new_doc;
+
+	new_doc = malloc(sizeof(HTMLDOC));
+	if( new_doc == NULL ){
+		error("createHtmlDocument", "ドキュメントの生成に失敗しました");
+	}
+
+	e_html = createElement("html");
+	e_head = createElement("head");
+	e_body = createElement("body");
+	appendChildNode(e_html, e_head);
+	appendChildNode(e_html, e_body);
+
+	return new_doc;
+}
+*/
+
+
+HTMLDOC* createHtmlDocument(void);
+void destroyHtmlDocument();
+
+ELEMENT getHtmlHeadElement(HTMLDOC* doc);
+ELEMENT getHtmlBodyElement(HTMLDOC* doc);
+
+ELEMENT createIdElement(char* name, char* id);
+ELEMENT addElementId(NODE* element, char* id);
+ELEMENT addElementClass(NODE* element, char* clas);
+
+ELEMENT getElementById(HTMLDOC doc, char* id_val)
+ELEMENT recursiveSearchElementById(ELEMENT element, char* id_val);
+
+/*
+ELEMENT recursiveSearchElementById(ELEMENT element, char* id_val){
+	char* element_id;
+	ELEMENT tmp;
+	NODE* np;
+
+	if( getNodeType(element) != NODE_ELEMENT ) return NULL;
+
+	element_id = getAttributeValue(element, "id", NULL, 0);
+	if( element_id != NULL && strcmp(element_id, id_val) == 0 ){
+		return element;
+	}
+
+	for( np = getFirstChildNode(element);
+	np != NULL;
+	np = getNextSiblingNode(np) ){
+		if( getNodeType(np) == NODE_ELEMENT ){
+			tmp = recursiveSearchElementById(np, id_val);
+			if( tmp != NULL ){
+				return tmp;
+			}
+		}
+	}
+
+	return NULL;
+}
+*/
+
+	
+
+	
+
+	
+
+
+
+void exportHtmlDocument(HTMLDOC doc, char* file_path);
+
+
+	

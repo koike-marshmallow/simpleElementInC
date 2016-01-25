@@ -1,0 +1,7 @@
+ELEMENT hctAddTitle(HTMLDOC* doc, char* title);
+ELEMENT hctAddMeta(HTMLDOC* doc, char* http-equiv, char* content);
+ELEMENT hctAddStylesheetLink(HTMLDOC* doc, char* href);
+
+ELEMENT hctCreateAnchor(char* href, char* atext);
+ELEMENT hctCreateTextElement(char* name, char*text);
+ELEMENT hctCreateImageElement(char* alt, char* src);
