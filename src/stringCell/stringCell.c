@@ -80,21 +80,27 @@ void strcel_core_removeCell(STRCELL* pre){
 }
 
 
-char* strcel_sitr_set(SC_SIMPLEITR* itr, STRCELL* head){
+char* strcel_sitr_set(SC_SIMPLEITR* itr, STRCELL* head, int spos){
 	NULL_CHECK(itr, "strcel_sitr_set");
 	NULL_CHECK(head, "strcel_sitr_set");
 
 	itr->cellp = head;
 	itr->pos = 0;
 
-	return head->cb;
+	if( spos < head->cblen ){
+		itr->pos = 0;
+	}else{
+		return NULL;
+	}
+
+	return head->cb + itr->pos;
 }
 
 
 char* strcel_sitr_next(SC_SIMPLEITR* itr){
 	STRCELL* cellp_tmp;
 	NULL_CHECK(itr, "strcel_sitr_next");
-	NULL_CHECK(itr->cellp, "strcel_sitr_next");
+	if( itr->cellp == NULL ) return NULL;
 
 	itr->pos = itr->pos + 1;
 	cellp_tmp = itr->cellp;
@@ -110,89 +116,60 @@ char* strcel_sitr_next(SC_SIMPLEITR* itr){
 
 STRCELL* strcel_core_getRear(STRCELL* head, int* ret_rearpos){
 	char* cp;
-	int cnt;
-	STRCELL* cellp;
+	SC_SIMPLEITR itr;
 	NULL_CHECK(head, "strcel_core_getRear");
 
-	cellp = head;
-	cnt = 0;
-	cp = cellp->cb;
-	while( *cp != '\0' ){
-		cnt++;
-
-		if( cnt < cellp->cblen ){
-			cp++;
-		}else{
-			if( cellp->next != NULL ){
-				cellp = cellp->next;
-				cp = cellp->cb;
-				cnt = 0;
-			}else{
-				return NULL;
-			}
-		}
+	cp = strcel_sitr_set(&itr, head, 0);
+	while( cp != NULL && *cp != '\0' ){
+		cp = strcel_sitr_ next(&itr);
 	}
 
-	if( ret_rearpos != NULL ) *ret_rearpos = cnt;
-	return cellp;
+	if( ret_rearpos != NULL ) *ret_rearpos = itr.pos;
+	return itr.cellp;
 }
 
 
 STRCELL* strcel_core_getPosition(STRCELL* head, int charat, int* ret_rearpos){
 	int i, cnt;
 	STRCELL* cellp;
+	SC_SIMPLEITR itr;
 	NULL_CHECK(head, "strcel_core_getPosition");
 
-	cellp = head;
-	cnt = 0;
+	strcel_sitr_set(&itr, head, 0);
 	for( i=0; i<charat; i++){
-		cnt++;
-		if( cnt >= cellp->cblen ){
-			if( cellp->next != NULL ){
-				cellp = cellp->next;
-				cnt = 0;
-			}else{
-				return NULL;
-			}
+		if( strcel_stir_next(&itr) == NULL ){
+			return NULL;
 		}
 	}
 
-	if( ret_rearpos != NULL ) *ret_rearpos = cnt;
-	return cellp;
+	if( ret_rearpos != NULL ) *ret_rearpos = itr.pos
+	return itr.cellp;
 }
 
 
 int strcel_core_writeString(STTRCELL* head, int celofs, char* str_ptr){
 	char* cp, strp;
 	int cnt;
-	STRCELL* cellp;
+	STRCELL* tmp_cellp;
+	SC_IMPLEITR itr;
 	NULL_CHECK(head, "strcel_core_writeString");
 
-	cellp = head;
-	if( celofs < cellp->cblen ){
-		cp = cellp->cb + celofs;
-		cnt = celofs;
-	}else{
-		return EOF;
-	}
+	cp = strcel_sitr_set(&itr, head, celofs);
+	if( cp == NULL ) return EOF;
 
 	strp = str_ptr;
 	while( 1 ){
 		*cp = *strp;
 		if( *strp == '\0' ) break;
 
-		cnt++;
-		if( cnt < cellp->cblen ){
-			cp++;
-		}else{
-			if( cellp->next == NULL ){
-				strcel_core_expandCell(
-					cellp, STRCELL_DEFAULT_CBLEN_EXPAND, 1);
-			}
-			cellp = cellp->next;
-			cnt = 0;
-			cp = cellp->cb;
+		tmp_cellp = itr.cellp;
+		cp = strcel_sitr_next(&itr);
+		if( cp == NULL ){
+			strcel_core_expandCell(
+				tmp_cellp, STRCELL_DEFAULT_CBLEN_EXPAND, 1);
+			cp = strcel_sitr_set(&itr, tmp_cellp->next, 0);
 		}
+
 		strp++;
 	}
 
@@ -231,7 +208,7 @@ int strcel_getLength(STRCELL* cell){
 	SC_SIMPLEITR itr;
 
 	count = 0;
-	cp = strcel_sitr_set(&itr, cell);
+	cp = strcel_sitr_set(&itr, cell, 0);
 	while( cp != NULL && *cp != '\0' ){
 		cp = strcel_sitr_next(&itr);
 		count++;
@@ -246,7 +223,7 @@ int strcel_getBufferLength(STRCELL* cell){
 	SC_SIMPLEITR itr;
 
 	count = 0;
-	strcel_sitr_set(&itr, cell);
+	strcel_sitr_set(&itr, cell, 0);
 	while( itr.cellp != NULL ){
 		count = count + (itr.cellp)->cblen;
 		strcel_sitr_next(&itr);
