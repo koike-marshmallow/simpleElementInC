@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../error/error.h"
@@ -171,6 +172,41 @@ void* jdataGetValuePointer(JSONDATA* data){
 	NULL_CHECK(data, "jdataGetValuePointer");
 	
 	return data->value;
+}
+
+
+char* jdataConvertValueString(JSONDATA* data, char* dest, int str_len){
+	NULL_CHECK(data, "jdataGetValueString");
+	ifassert((dest != NULL), 
+		"jadataConvertValueString", "destptr is null");
+
+	switch( jadataGetType(data) ){
+	case JDTYPE_NULL:
+		sprintf(dest, "null");
+		break;
+	case JDYPTE_INTEGER:
+		sprintf(dest, "%d", jdataGetInt(data));
+		break;
+	case JDTYPE_FLOAT:
+		sprintf(dest, "%f", jdataGetFloat(data));
+		break;
+	case JDTYPE_STRING:
+		memset(dest, 0, str_len);
+		strncat(dest, "\"", str_len - 2);
+		strncat(dest, jdataGetString(data), str_len - 3);
+		strcat(dest, "\"", str_len - 2);
+		break;
+	case JDTYPE_BOOLEAN:
+		if( jdataGetBool(data) ) sprintf(dest, "true");
+		else sprintf(dest, "false");
+		break;
+	default:
+		fnerror("jdataConvertValueString",
+			"undefined json data type");
+		break:
+	}
+
+	return dest;
 }
 
 

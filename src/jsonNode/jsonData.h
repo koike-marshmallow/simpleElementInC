@@ -44,6 +44,8 @@ char* jdataGetString(JSONDATA* data);
 JD_TYPE_BOOL jdataGetBool(JSONDATA* data);
 void* jdataGetValuePointer(JSONDATA* data);
 
+char* jdataConvertValueString(JSONDATA* data, char* dest, int str_len);
+
 int isJsonDataNull(JSONDATA* data);
 int checkJsonDataType(JSONDATA* data, int type);
 
