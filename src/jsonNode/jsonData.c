@@ -7,6 +7,8 @@
 #define NULL_CHECK(p, fnc) ifassert((p == NULL), fnc, "jsondata is null")
 #define DATA_MALLOC_ASSERT(p, fnc) ifassert((p == NULL), fnc, "cannot create data space")
 #define VALUE_NULL_CHECK(p, fnc) ifassert((p == NULL), fnc, "jsondata value is null")
+#define STRCONV_CHECKLEN(len, lim, fnc) \
+	ifassert(((len - 1) < lim), fnc, "destination string buffer is short")
 
 JSONDATA* createJsonData(void){
 	JSONDATA* new_data;
@@ -175,35 +177,38 @@ void* jdataGetValuePointer(JSONDATA* data){
 }
 
 
-char* jdataConvertValueString(JSONDATA* data, char* dest, int str_len){
+char* jdataConvertValueString(JSONDATA* data, char* dest, int dst_len){
+	int suc;
 	NULL_CHECK(data, "jdataGetValueString");
-	ifassert((dest != NULL), 
+	ifassert((dest == NULL), 
 		"jadataConvertValueString", "destptr is null");
 
-	switch( jadataGetType(data) ){
+	switch( jdataGetType(data) ){
 	case JDTYPE_NULL:
-		sprintf(dest, "null");
+		suc = snprintf(dest, dst_len, "null");
 		break;
-	case JDYPTE_INTEGER:
-		sprintf(dest, "%d", jdataGetInt(data));
+	case JDTYPE_INTEGER:
+		suc = snprintf(dest, dst_len, "%d", jdataGetInt(data));
 		break;
 	case JDTYPE_FLOAT:
-		sprintf(dest, "%f", jdataGetFloat(data));
+		suc = snprintf(dest, dst_len, "%g", jdataGetFloat(data));
 		break;
 	case JDTYPE_STRING:
-		memset(dest, 0, str_len);
-		strncat(dest, "\"", str_len - 2);
-		strncat(dest, jdataGetString(data), str_len - 3);
-		strcat(dest, "\"", str_len - 2);
+		suc = snprintf(dest, dst_len, "\"%s\"", jdataGetString(data));
 		break;
 	case JDTYPE_BOOLEAN:
-		if( jdataGetBool(data) ) sprintf(dest, "true");
-		else sprintf(dest, "false");
+		if( jdataGetBool(data) ) suc = snprintf(dest, dst_len, "true");
+		else suc = snprintf(dest, dst_len, "false");
 		break;
 	default:
 		fnerror("jdataConvertValueString",
 			"undefined json data type");
-		break:
+		break;
+	}
+
+	if( suc >= dst_len && dst_len > 0 ){
+		dest[0] = '\0';
+		return NULL;
 	}
 
 	return dest;
