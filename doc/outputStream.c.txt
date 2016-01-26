@@ -1,0 +1,77 @@
+typedef struct s_outstream{
+	int stream_type;
+	void* stream_ptr;
+} OUT_STREAM;
+
+#define STREAMTYPE_FILE 1
+#define STREAMTYPE_STRBUF 2
+
+#define NULL_CHECK(p, fnc) ifassert((p == NULL), fnc, "ストリームがnullです")
+#define ABORT_TYPEERROR(fnc) fnerror(fnc, "未定義のストリームタイプです")
+
+#define OUTSTREAM_INIT_FILE(fp) fp
+#define OUTSTREAM_INIT_STRBUF(sb) sb
+
+
+void assertOutputStreamType(int type, char* fnc){
+	switch( type ){
+	case OSTYPE_FILE:
+	case OSTYPE_STRBUF:
+		break;
+	default:
+		ABORT_TYPEERROR(fnc);
+		break;
+	}
+}
+
+
+OUT_STREAM* createOutputStream(int type, void* ptr){
+	OUT_STREAM* new_stream;
+	assertOutputStreamType(type, "createOutputStream");
+
+	new_stream = malloc(sizeof(OUT_STREAM));
+	ifassert((new_stream == NULL), 
+			"createOutputSream", "ストリームを生成できませんでした");
+
+	new_stream->stream_type = type;
+	new_stream->stream_ptr = ptr;
+
+	return new_stream;
+}
+
+
+int osWriteString(OUT_STREAM* sp, char* str){
+	NULL_CHECK(sp, "osWriteString");
+
+	switch( sp->stream_type ){
+	case OSTYPE_FILE:
+		if( fputs(str, sp->stream_ptr) == EOF ){
+			return 0;
+		}
+		break;
+	case OSTYPE_STRBUF:
+		sbStringCat(sp->stream_ptr, str)
+		break;
+	default:
+		ABORT_TYPEERROR("osWriteString");
+		return 0;
+	}
+	return 1;
+}
+
+
+void destroyOutputStream(OUT_STREAM* sp){
+	NULL_CHECK(sp, "destroyOutputStream");
+
+	switch( sp->stream_type ){
+	case OSTYPE_FILE:
+	case OSTYPE_STRBUF:
+		break;
+	default:
+		ABORT_TYPEERROR("destroyOutputStream");
+		break;
+	}
+
+	memset(sp, 0, sizeof(OUT_STREAM));
+	free(sp);
+}
