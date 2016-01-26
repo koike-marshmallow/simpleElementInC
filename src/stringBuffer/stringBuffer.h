@@ -1,3 +1,6 @@
+#ifndef STRINGBUFFER_H
+#define STRINGBUFFER_H
+
 struct s_stringBuffer {
 	char* buffer;
 	int buffer_len;
@@ -22,3 +25,5 @@ int sbExportFile(STRBUF* sbuf, FILE *fp);
 
 void printStringBufferInfo(STRBUF* sbuf);
 void dumpStringBuffer(FILE* fp, STRBUF* sbuf, int c);
+
+#endif
