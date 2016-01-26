@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../simpleElement/nodeCore.h"
 #include "../stringBuffer/stringBuffer.h"
 #include "../error/error.h"
 #include "jsonData.h"

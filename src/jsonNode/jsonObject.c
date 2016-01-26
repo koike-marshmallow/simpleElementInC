@@ -3,6 +3,7 @@
 #include "../error/error.h"
 #include "../simpleElement/nodeCore.h"
 #include "jsonNode.h"
+#include "jsonObject.h"
 
 #define NULL_CHECK(p, fnc) ifassert((p == NULL), fnc, "ノードがnullです")
 #define ARG_NULL_CHECK(p, fnc) ifassert((p == NULL), fnc, "引数がnullです")

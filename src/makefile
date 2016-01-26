@@ -47,7 +47,7 @@ jsonNode.o : $(src_jsonNode_h) $(src_jsonNode_c) $(src_jsonData_h) $(src_error_h
 	cc -c $(src_jsonNode_c)
 jsonObject.o : $(src_jsonObject_h) $(src_jsonObject_c) $(src_jsonNode_h) $(src_nodeCore_h) $(src_error_h)
 	cc -c $(src_jsonObject_c)
-jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_stringBuffer_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
+jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_nodeCore_h) $(src_stringBuffer_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
 	cc -c $(src_jsonTransformer_c)
 
 

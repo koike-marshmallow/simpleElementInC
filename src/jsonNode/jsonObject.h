@@ -5,10 +5,6 @@
 #	include "../simpleElement/nodeCore.h"
 #endif
 
-#ifndef JSONNODE_H
-#	include "jsonNode.h"
-#endif
-
 #define JN_MEMBER(name, node) jnodeAppendChild(JN_NAME(name), node)
 
 NODE* createJsonObject(void);
@@ -26,7 +22,7 @@ int jobjectMemberExist(NODE* obj, char* name);
 void jobjectSetMember(NODE* obj, char* name, NODE* node);
 NODE* jobjectRemoveMember(NODE* obj, char* name);
 int jobjectGetMemberCount(NODE* obj);
-int jobjectGetMemberList(NODE* obj, char* buffer, char* list[], int buf_len, int list_len);
+int jobjectGetMemberList(NODE* obj, char* list, int list_len, int buf_len);
 NODE* jobjectGetMember(NODE* obj, char* name);
 
 /* ArrayControl Function */
