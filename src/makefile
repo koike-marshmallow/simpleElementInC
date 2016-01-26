@@ -22,6 +22,8 @@ src_jsonNode_h = jsonNode/jsonNode.h
 src_jsonNode_c = jsonNode/jsonNode.c
 src_jsonObject_h = jsonNode/jsonObject.h
 src_jsonObject_c = jsonNode/jsonObject.c
+src_jsonTransformer_h = jsonNode/jsonTransformer.h
+src_jsonTransformer_c = jsonNode/jsonTransformer.c
 
 
 ## module rules
@@ -45,6 +47,8 @@ jsonNode.o : $(src_jsonNode_h) $(src_jsonNode_c) $(src_jsonData_h) $(src_error_h
 	cc -c $(src_jsonNode_c)
 jsonObject.o : $(src_jsonObject_h) $(src_jsonObject_c) $(src_jsonNode_h) $(src_nodeCore_h) $(src_error_h)
 	cc -c $(src_jsonObject_c)
+jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_stringBuffer_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
+	cc -c $(src_jsonTransformer_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
@@ -63,7 +67,7 @@ testStringBuffer.o : $(src_stringBuffer_h) testStringBuffer.c
 objs_testStringBuffer = testStringBuffer.o stringBuffer.o error.o
 testStringBuffer : $(objs_testStringBuffer)
 	cc -o testStringBuffer $(objs_testStringBuffer)
-testMarkupTransformer.o : $(src_stringBuffer_h) $(src_nodeCore_h) $(src_simpleElement_h) $(src_markupTransformer_h)  testMarkupTransformer.c
+testMarkupTransformer.o : $(src_stringBuffer_h) $(src_nodeCore_h) $(src_simpleElement_h) $(src_markupTransformer_h) testMarkupTransformer.c
 	cc -c testMarkupTransformer.c
 objs_testMarkupTransformer = testMarkupTransformer.o nodeCore.o simpleNode.o simpleElement.o error.o stringBuffer.o markupTransformer.o
 testMarkupTransformer : $(objs_testMarkupTransformer)

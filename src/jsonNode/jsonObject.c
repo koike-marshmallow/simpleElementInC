@@ -203,8 +203,9 @@ int jarrayGetLength(NODE* ary){
 	
 	
 NODE* jsonMemberIteratorGetHead(NODE* jobj){
-	int ntype = jnodeGetNodeType(jobj);
+	int ntype;
 	NULL_CHECK(jobj, "jsonMemberIteratorGetHead");
+	ntype = jnodeGetNodeType(jobj);
 	if( ntype != JNODE_ARRAY && ntype != JNODE_OBJECT ) return NULL;
 	return getFirstChildNode(jobj);
 }

@@ -38,10 +38,8 @@ NODE* jarrayGet(NODE* ary, int idx);
 int jarrayGetLength(NODE* ary);
 
 /* Iterate Function */
-NODE* jobjectGetHeadNode(NODE* jobj);
-NODE* jobjectGetNextNode(NODE* jobj);
-NODE* jarrayGetHeadNode(NODE* jary);
-NODE* jarrayGetNextNode(NODE* jary);
+NODE* jsonMemberIteratorGetHead(NODE* jobj);
+NODE* jsonMemberIteratorNext(NODE* ch);
 char* jobjectGetMemberName(NODE* node);
 NODE* jobjectGetMemberData(NODE* node);
 
