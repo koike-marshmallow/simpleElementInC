@@ -16,6 +16,8 @@ void jt_transformValueNode(STRBUF* dst, NODE* val_node, int level);
 void jt_transformNameNode(STRBUF* dst, NODE* name_node, int level);
 void jt_transformArray(STRBUF* dst, NODE* ary_node, int level);
 void jt_transformObject(STRBUF* dst, NODE* obj_node, int level);
-void jt_tranformDataNode(STRBUF* dst, NODE* j_node, int level);
+void jt_transformDataNode(STRBUF* dst, NODE* j_node, int level);
 
 void transfromJson(STRBUF* dest, NODE* root);
+
+#endif

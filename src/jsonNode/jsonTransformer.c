@@ -5,6 +5,7 @@
 #include "jsonData.h"
 #include "jsonNode.h"
 #include "jsonObject.h"
+#include "jsonTransformer.h"
 
 #define VALUEBUF_LEN 32
 
@@ -69,7 +70,7 @@ void jt_transformNameNode(STRBUF* dst, NODE* name_node, int level){
 	sbCatString(dst, jobjectGetMemberName(name_node));
 	sbCatString(dst, "\": ");
 	
-	jt_transformDataNode(dst, jobjectGetMemberValue(name_node), level);
+	jt_transformDataNode(dst, jobjectGetMemberData(name_node), level);
 }
 
 
@@ -117,7 +118,7 @@ void jt_transformObject(STRBUF* dst, NODE* obj_node, int level){
 
 
 void jt_transformDataNode(STRBUF* dst, NODE* j_node, int level){
-	NULL_CHECK(dst, obj_node, "jt_transformNode");
+	NULL_CHECK(dst, j_node, "jt_transformNode");
 	
 	switch( jnodeGetNodeType(j_node) ){
 	case JNODE_VALUE:

@@ -226,7 +226,7 @@ char* jobjectGetMemberName(NODE* node){
 }
 
 
-NODE* jobjectGetMemberValue(NODE* node){
+NODE* jobjectGetMemberData(NODE* node){
 	NULL_CHECK(node, "jobjectGetMemberValue");
 	
 	if( checkJsonNodeType(node, JNODE_NAMENODE) ){
