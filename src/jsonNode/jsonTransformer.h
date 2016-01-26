@@ -9,8 +9,14 @@
 #	include "../simpleElement/nodeCore.h"
 #endif
 
+extern int JT_INDENT;
+extern int JT_LINEFEED;
+extern char* JT_INDENT_CHAR;
+
+void jtIndent(STRBUF* dst, int level);
+void jtLinefeed(STRBUF* dst);
+
 /* layer1 */
-/*void jt_transformNullNode(STRBUF* dst, NODE* null_node, int level);*/
 void jt_transformValueNode(STRBUF* dst, NODE* val_node, int level);
 /* layer2 */
 void jt_transformNameNode(STRBUF* dst, NODE* name_node, int level);

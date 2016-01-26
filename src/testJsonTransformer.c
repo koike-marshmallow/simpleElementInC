@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "jsonNode/jsonNode.h"
 #include "jsonNode/jsonObject.h"
+#include "jsonNode/jsonTransformer.h"
 #include "stringBuffer/stringBuffer.h"
 
 int main(void){
@@ -25,6 +26,8 @@ int main(void){
 	jarrayAppend(ary2, JN_STRING("bar"));
 	
 	strb = createStringBuffer(4096);
+	JT_LINEFEED = 1;
+	JT_INDENT = 1;
 	transformJson(strb, obj0);
 	printStringBufferInfo(strb);
 	

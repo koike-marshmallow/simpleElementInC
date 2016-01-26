@@ -17,7 +17,29 @@
 #define SPRINTF_ASSERT(ret, limit, fnc) \
 	ifassert((ret >= limit), fnc, "VALUEバッファがオーバーフローしました")
 
+int JT_INDENT = 0;
+int JT_LINEFEED = 0;
+char* JT_INDENT_CHAR = "  ";
+
 char JT_VALUE_BUFFER[VALUEBUF_LEN];
+
+
+void jtIndent(STRBUF* dst, int level){
+	int i;
+	if( JT_INDENT ){
+		for( i=0; i<level; i++){
+			sbCatString(dst, JT_INDENT_CHAR);
+		}
+	}
+}
+
+
+void jtLinefeed(STRBUF* dst){
+	if( JT_LINEFEED ){
+		sbCatString(dst, "\n");
+	}
+}
+
 
 void jt_transformValueNode(STRBUF* dst, NODE* val_node, int level){
 	JSONDATA* data;
@@ -82,14 +104,22 @@ void jt_transformArray(STRBUF* dst, NODE* ary_node, int level){
 		"jt_transformArray", "ARRAYノードではありません");
 	
 	sbCatString(dst, "[");
+	jtLinefeed(dst);
+	jtIndent(dst, level+1);
 	comma = FALSE;
 	for( np = jsonMemberIteratorGetHead(ary_node);
 	np != NULL;
 	np = jsonMemberIteratorNext(np) ){
-		if( comma ) sbCatString(dst, ", ");
+		if( comma ){
+			sbCatString(dst, ", ");
+			jtLinefeed(dst);
+			jtIndent(dst, level+1);
+		}
 		jt_transformDataNode(dst, np, level + 1);
 		comma = TRUE;
 	}
+	jtLinefeed(dst);
+	jtIndent(dst, level);
 	sbCatString(dst, "]");
 }
 
@@ -102,11 +132,17 @@ void jt_transformObject(STRBUF* dst, NODE* obj_node, int level){
 		"jt_transformObject", "OBJECTノードではありません");
 	
 	sbCatString(dst, "{");
+	jtLinefeed(dst);
+	jtIndent(dst, level+1);
 	comma = FALSE;
 	for( np = jsonMemberIteratorGetHead(obj_node);
 	np != NULL;
 	np = jsonMemberIteratorNext(np) ){
-		if( comma ) sbCatString(dst, ", ");
+		if( comma ){
+			sbCatString(dst, ", ");
+			jtLinefeed(dst);
+			jtIndent(dst, level+1);
+		}
 		if( checkJsonNodeType(np, JNODE_NAMENODE) ){
 			jt_transformNameNode(dst, np, level + 1);
 		}else{
@@ -114,6 +150,8 @@ void jt_transformObject(STRBUF* dst, NODE* obj_node, int level){
 		}
 		comma = TRUE;
 	}
+	jtLinefeed(dst);
+	jtIndent(dst, level);
 	sbCatString(dst, "}");
 }
 
