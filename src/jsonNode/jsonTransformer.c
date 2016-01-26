@@ -102,6 +102,7 @@ void jt_transformObject(STRBUF* dst, NODE* obj_node, int level){
 		"jt_transformObject", "OBJECTノードではありません");
 	
 	sbCatString(dst, "{");
+	comma = FALSE;
 	for( np = jsonMemberIteratorGetHead(obj_node);
 	np != NULL;
 	np = jsonMemberIteratorNext(np) ){
