@@ -28,6 +28,9 @@ src_jsonTransformer_c = jsonNode/jsonTransformer.c
 src_stringCell_h = stringCell/stringCell.h
 src_stringCell_c = stringCell/stringCell.c
 
+src_outputStream_h = outputStream/outputStream.h
+src_outputStream_c = outputStream/outputStream.c
+
 
 ## module rules
 nodeCore.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeCore_c)
@@ -50,11 +53,14 @@ jsonNode.o : $(src_jsonNode_h) $(src_jsonNode_c) $(src_jsonData_h) $(src_error_h
 	cc -c $(src_jsonNode_c)
 jsonObject.o : $(src_jsonObject_h) $(src_jsonObject_c) $(src_jsonNode_h) $(src_nodeCore_h) $(src_error_h)
 	cc -c $(src_jsonObject_c)
-jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_nodeCore_h) $(src_stringBuffer_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
+jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_nodeCore_h) $(src_outputStream_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
 	cc -c $(src_jsonTransformer_c)
 
 stringCell.o : $(src_error_h) $(src_stringCell_h) $(src_stringCell_c)
 	cc -c $(src_stringCell_c)
+
+outputStream.o : $(src_outputStream_h) $(src_outputStream_c)
+	cc -c $(src_outputStream_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
@@ -94,9 +100,9 @@ testJsonObject.o : $(src_jsonNode_h) $(src_jsonObject_h) testJsonObject.c
 objs_testJsonNode = error.o nodeCore.o jsonData.o jsonNode.o jsonObject.o testJsonObject.o
 testJsonObject : $(objs_testJsonNode)
 	cc -o testJsonObject $(objs_testJsonNode)
-testJsonTransformer.o : $(src_jsonNode_h) $(src_jsonObject_h) $(src_jsonTransformer_h) testJsonTransformer.c
+testJsonTransformer.o : $(src_jsonNode_h) $(src_jsonObject_h) $(src_outputStream_h) $(src_jsonTransformer_h) testJsonTransformer.c
 	cc -c testJsonTransformer.c
-objs_testJsonTransformer = error.o nodeCore.o jsonData.o jsonNode.o jsonObject.o jsonTransformer.o stringBuffer.o testJsonTransformer.o
+objs_testJsonTransformer = error.o nodeCore.o jsonData.o jsonNode.o jsonObject.o jsonTransformer.o outputStream.o testJsonTransformer.o
 testJsonTransformer : $(objs_testJsonTransformer)
 	cc -o testJsonTransformer $(objs_testJsonTransformer)
 
@@ -105,3 +111,9 @@ testStringCell.o : $(src_stringCell_h) testStringCell.c
 objs_testStringCell = error.o stringCell.o testStringCell.o
 testStringCell : $(objs_testStringCell)
 	cc -o testStringCell $(objs_testStringCell)
+
+testOutputStream.o : $(src_outputStream_h) testOutputStream.c
+	cc -c testOutputStream.c
+objs_testOutputStream = outputStream.o testOutputStream.o
+testOutputStream : $(objs_testOutputStream)
+	cc -o testOutputStream $(objs_testOutputStream)

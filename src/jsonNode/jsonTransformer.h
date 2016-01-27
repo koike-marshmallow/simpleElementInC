@@ -1,8 +1,8 @@
 #ifndef JSONTRANSFORMER_H
 #define JSONTRANSFORMER_H
 
-#ifndef STRINGBUFFER_H
-#	include "../stringBuffer/stringBuffer.h"
+#ifndef OUTPUTSTREAM_H
+#	include "../outputStream/outputStream.h"
 #endif
 
 #ifndef NODECORE_H
@@ -13,17 +13,17 @@ extern int JT_INDENT;
 extern int JT_LINEFEED;
 extern char* JT_INDENT_CHAR;
 
-void jtIndent(STRBUF* dst, int level);
-void jtLinefeed(STRBUF* dst);
+void jtIndent(OUTSTREAM* dst, int level);
+void jtLinefeed(OUTSTREAM* dst);
 
 /* layer1 */
-void jt_transformValueNode(STRBUF* dst, NODE* val_node, int level);
+void jt_transformValueNode(OUTSTREAM* dst, NODE* val_node, int level);
 /* layer2 */
-void jt_transformNameNode(STRBUF* dst, NODE* name_node, int level);
-void jt_transformArray(STRBUF* dst, NODE* ary_node, int level);
-void jt_transformObject(STRBUF* dst, NODE* obj_node, int level);
-void jt_transformDataNode(STRBUF* dst, NODE* j_node, int level);
+void jt_transformNameNode(OUTSTREAM* dst, NODE* name_node, int level);
+void jt_transformArray(OUTSTREAM* dst, NODE* ary_node, int level);
+void jt_transformObject(OUTSTREAM* dst, NODE* obj_node, int level);
+void jt_transformDataNode(OUTSTREAM* dst, NODE* j_node, int level);
 
-void transfromJson(STRBUF* dest, NODE* root);
+void transfromJson(OUTSTREAM* dest, NODE* root);
 
 #endif
