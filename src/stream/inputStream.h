@@ -10,7 +10,7 @@ struct s_instream {
 };
 typedef struct s_instream INSTREAM;
 
-INSTREAM* createEmptyInputStream();
+INSTREAM* createEmptyInputStream(void);
 int instream_readc(INSTREAM* stream);
 int instream_reads(INSTREAM* stream, char* dst, int len);
 int instream_skip(INSTREAM* stream, int byte);
