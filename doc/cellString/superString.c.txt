@@ -1,0 +1,81 @@
+#define STRCELL_CHARLEN 64
+
+struct s_strcell{
+	char* cb;
+	int cblen;
+	struct s_strcell* next;
+};
+typedef struct s_strcell STRCELL;
+
+struct s_strcellitr{
+	STRCELL* cell;
+	int cellpos;
+};
+typedef strcut s_strcellitr STRCELL_ITR;
+
+/* resource manager */
+STRCELL* createStringCell(int len);
+void destroyStringCell(STRCELL* cell);
+void destroyLinkedStringCells(STRCELL* head);
+
+int celstr_getLength(STRCELL* head);
+
+STRCELL_ITR* celstr_createIrerator(STRCELL* head);
+char* celstr_iteratorNext(STRCELL_ITR* itr);
+int celstr_iteratorHasNext(STRCELL_ITR* itr);
+char* celstr_iteratorGet(STRCELL_ITR* itr);
+void celstr_destroyIterator(STRCELL_ITR* itr);
+
+STRCELL* celstr_core_getRearCell(STRCELL* head, int* ret_rearpos);
+STRCELL* celstr_core_setstr(STRCELL* head, int offset, char* str_head);
+
+
+
+STRCELL* createStringCell(int len){
+	STRCELL* new_cell;
+
+	new_cell = malloc(sizeof(STRCELL));
+	ifassert((new_cell == NULL), 
+		"createStringCell", "cannot create string cell");
+
+	new_cell->cb = malloc(sizeof(char) * len);
+	ifassert((new_cell->cb == NULL),
+		"createStringCell", "cannot create string buffer");
+
+	memset(new_cell->cb, 0, sizeof(char) * len);
+	new_cell->cblen = len;
+	new_cell->next = NULL;
+
+	return 0;
+}
+
+
+void destroyStringCell(STRCELL* cell){
+	NULL_CHECK(cell, "destroyStringCell");
+
+	memset(cell->cb, 0, sizeof(char) * cell->cblen);
+	free(cell->cb);
+	memset(cell, 0, sizeof(STRCELL));
+	free(cell);
+}
+
+
+void destroyLinkedStringCells(STRCELL* head){
+	NULL_CHECK(cell, "destroyLinkedStringCells");
+
+	if( head->next != NULL ){
+		destroyLinkedStringCells(head->next);
+	}
+	destroyStringCell(head);
+}
+
+
+STRCELL* celstr_core_setstr(STRCELL* cell, int cell_offset, char* str_head){
+	int cnt;
+	char* cp;
+	NULL_CHECK(cell, "celstr_core_setstr");
+
+ 	ifassert((cell->cbl >= cell_offset), 
+
+
+}
