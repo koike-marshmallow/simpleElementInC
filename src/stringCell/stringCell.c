@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../error/error.h"
 #include "stringCell.h"
 
+#define DUMP_LF 10
+
+#define NULL_CHECK(p, fnc) \
+	ifassert((p == NULL), fnc, "argument pointer is null");
 
 int STRCELL_DEFAULT_CBLEN_CREATE = 64;
 int STRCELL_DEFAULT_CBLEN_EXPAND = 64;
@@ -34,7 +39,7 @@ STRCELL* createStringCell(void){
 
 
 void destroyStringCell_nr(STRCELL* cell){
-	CHECK_NULL(cell, "destroyStringCell_nr");
+	NULL_CHECK(cell, "destroyStringCell_nr");
 
 	memset(cell->cb, 0, cell->cblen);
 	free(cell->cb);
@@ -44,7 +49,7 @@ void destroyStringCell_nr(STRCELL* cell){
 
 
 void destroyStringCell(STRCELL* head){
-	CHECK_NULL(cell, "destroyStringCell");
+	NULL_CHECK(head, "destroyStringCell");
 
 	if( head->next != NULL ){
 		destroyStringCell(head->next);
@@ -98,19 +103,17 @@ char* strcel_sitr_set(SC_SIMPLEITR* itr, STRCELL* head, int spos){
 
 
 char* strcel_sitr_next(SC_SIMPLEITR* itr){
-	STRCELL* cellp_tmp;
 	NULL_CHECK(itr, "strcel_sitr_next");
 	if( itr->cellp == NULL ) return NULL;
 
 	itr->pos = itr->pos + 1;
-	cellp_tmp = itr->cellp;
-	if( itr->pos >= cellp_tmp->cblen ){
-		itr->cellp = cellp_tmp->next;
-		itr->cnt = 0;
-		if( cellp_tmp->next == NULL ) return NULL;
+	if( itr->pos >= (itr->cellp)->cblen ){
+		itr->cellp = (itr->cellp)->next;
+		itr->pos = 0;
+		if( itr->cellp == NULL ) return NULL;
 	}
 
-	return cellp_tmp->cb + itr->pos;
+	return (itr->cellp)->cb + itr->pos;
 }
 
 
@@ -121,7 +124,7 @@ STRCELL* strcel_core_getRear(STRCELL* head, int* ret_rearpos){
 
 	cp = strcel_sitr_set(&itr, head, 0);
 	while( cp != NULL && *cp != '\0' ){
-		cp = strcel_sitr_ next(&itr);
+		cp = strcel_sitr_next(&itr);
 	}
 
 	if( ret_rearpos != NULL ) *ret_rearpos = itr.pos;
@@ -137,21 +140,21 @@ STRCELL* strcel_core_getPosition(STRCELL* head, int charat, int* ret_rearpos){
 
 	strcel_sitr_set(&itr, head, 0);
 	for( i=0; i<charat; i++){
-		if( strcel_stir_next(&itr) == NULL ){
+		if( strcel_sitr_next(&itr) == NULL ){
 			return NULL;
 		}
 	}
 
-	if( ret_rearpos != NULL ) *ret_rearpos = itr.pos
+	if( ret_rearpos != NULL ) *ret_rearpos = itr.pos;
 	return itr.cellp;
 }
 
 
-int strcel_core_writeString(STTRCELL* head, int celofs, char* str_ptr){
-	char* cp, strp;
+int strcel_core_writeString(STRCELL* head, int celofs, char* str_ptr){
+	char *cp, *strp;
 	int cnt;
 	STRCELL* tmp_cellp;
-	SC_IMPLEITR itr;
+	SC_SIMPLEITR itr;
 	NULL_CHECK(head, "strcel_core_writeString");
 
 	cp = strcel_sitr_set(&itr, head, celofs);
@@ -178,7 +181,8 @@ int strcel_core_writeString(STTRCELL* head, int celofs, char* str_ptr){
 
 
 void strcel_resize(STRCELL* cell, int length){
-	STRBUF* cellp;
+	int remain;
+	STRCELL* cellp;
 	NULL_CHECK(cell, "strcel_resize");
 
 	remain = length;
@@ -220,14 +224,132 @@ int strcel_getLength(STRCELL* cell){
 
 int strcel_getBufferLength(STRCELL* cell){
 	int count;
-	SC_SIMPLEITR itr;
+	STRCELL* cellp;
 
 	count = 0;
-	strcel_sitr_set(&itr, cell, 0);
-	while( itr.cellp != NULL ){
-		count = count + (itr.cellp)->cblen;
-		strcel_sitr_next(&itr);
+	cellp = cell;
+	while( cellp != NULL ){
+		count = count + cellp->cblen;
+		cellp = cellp->next;
 	}
 
 	return count;
+}
+
+
+void strcel_catString(STRCELL* cell, char* str){
+	STRCELL* rear_cell;
+	int rear_pos;
+	NULL_CHECK(cell, "strcel_catString");
+
+	rear_cell = strcel_core_getRear(cell, &rear_pos);
+	ifassert((rear_cell == NULL),
+		"strcel_catString", "rear iteration error");
+
+	strcel_core_writeString(rear_cell, rear_pos, str);
+}
+
+
+void strcel_setString(STRCELL* cell, char* str){
+	NULL_CHECK(cell, "strcel_setStirng");
+
+	strcel_core_writeString(cell, 0, str);
+}
+
+
+
+char* strcel_copyto(STRCELL* cell, char* dst, int dst_len){
+	char *ch, *dch;
+	int cnt;
+	SC_SIMPLEITR itr;
+	NULL_CHECK(cell, "strcel_copyto");
+	NULL_CHECK(dst, "strcel_copyto");
+
+	dch = dst;
+	ch = strcel_sitr_set(&itr, cell, 0);
+	cnt = 0;
+	while( ch != NULL ){
+		if( cnt >= (dst_len - 1) ){
+			*dch = '\0';
+			break;
+		}
+
+		*dch = *ch;
+		if( *ch == '\0' ){
+			break;
+		}
+
+		dch++;
+		cnt++;
+		ch = strcel_sitr_next(&itr);
+	}
+
+	return dst;
+}
+
+
+char* strcel_createString(STRCELL* cell){
+	int str_length;
+	char* mlstr;
+	NULL_CHECK(cell, "strcel_createString");
+
+	str_length = strcel_getLength(cell);
+	mlstr = malloc(sizeof(char) * (str_length + 1));
+	ifassert((mlstr == NULL), 
+		"strcel_createString", "cannot create string");
+
+	return strcel_copyto(cell, mlstr, str_length + 1);
+}
+
+
+int strcel_outputFile(STRCELL* cell, FILE* dst){
+	char* ch;
+	SC_SIMPLEITR itr;
+	NULL_CHECK(cell, "strcel_outputFile");
+
+	ch = strcel_sitr_set(&itr, cell, 0);
+	while( ch != NULL && *ch != '\0' ){
+		if( fputc(*ch, dst) == EOF ) return EOF;
+		ch = strcel_sitr_next(&itr);
+	}
+
+	return 0;
+}
+
+
+void strcel_dumpStringCell(STRCELL* cell, FILE* dst){
+	int i;
+	NULL_CHECK(cell, "strcel_dumpStringCell");
+
+	fprintf(dst, "  CELL_ADDR: %p\n", cell);
+	fprintf(dst, "  CAPASITY : %d\n", cell->cblen);
+	fprintf(dst, "  NEXT_CELL: %p\n", cell->next);
+
+	fprintf(dst, "  EXPRESSION -----\n    ");
+	for( i=0; i<(cell->cblen); i++){
+		if( *(cell->cb + i) == '\0' ) break;
+		fputc(*(cell->cb + i), dst);
+	}
+	fprintf(dst, "\n");
+
+	fprintf(dst, "  DUMP_BUFFER -----");
+	for( i=0; i<(cell->cblen); i++){
+		if( (i % DUMP_LF) == 0 && i != (cell->cblen - 1))
+			fprintf(dst, "\n    ");
+		fprintf(dst, "%02x ", *(cell->cb + i));
+	}
+	printf("\n");
+}
+
+
+void strcel_dumpStringCells(STRCELL* cell, FILE* dst){
+	STRCELL* cp;
+	NULL_CHECK(cell, "strcel_dumpStringCells");
+
+	cp = cell;
+	while( cp != NULL ){
+		fprintf(dst, "----------\n");
+		strcel_dumpStringCell(cp, dst);
+		cp = cp->next;
+	}
 }

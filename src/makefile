@@ -25,6 +25,9 @@ src_jsonObject_c = jsonNode/jsonObject.c
 src_jsonTransformer_h = jsonNode/jsonTransformer.h
 src_jsonTransformer_c = jsonNode/jsonTransformer.c
 
+src_stringCell_h = stringCell/stringCell.h
+src_stringCell_c = stringCell/stringCell.c
+
 
 ## module rules
 nodeCore.o : $(src_error_h) $(src_nodeCore_h) $(src_nodeCore_c)
@@ -49,6 +52,9 @@ jsonObject.o : $(src_jsonObject_h) $(src_jsonObject_c) $(src_jsonNode_h) $(src_n
 	cc -c $(src_jsonObject_c)
 jsonTransformer.o : $(src_jsonTransformer_h) $(src_jsonTransformer_c) $(src_nodeCore_h) $(src_stringBuffer_h) $(src_error_h) $(src_jsonData_h) $(src_jsonNode_h) $(src_jsonObject_h)
 	cc -c $(src_jsonTransformer_c)
+
+stringCell.o : $(src_error_h) $(src_stringCell_h) $(src_stringCell_c)
+	cc -c $(src_stringCell_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
@@ -93,4 +99,9 @@ testJsonTransformer.o : $(src_jsonNode_h) $(src_jsonObject_h) $(src_jsonTransfor
 objs_testJsonTransformer = error.o nodeCore.o jsonData.o jsonNode.o jsonObject.o jsonTransformer.o stringBuffer.o testJsonTransformer.o
 testJsonTransformer : $(objs_testJsonTransformer)
 	cc -o testJsonTransformer $(objs_testJsonTransformer)
-	
+
+testStringCell.o : $(src_stringCell_h) testStringCell.c
+	cc -c testStringCell.c
+objs_testStringCell = error.o stringCell.o testStringCell.o
+testStringCell : $(objs_testStringCell)
+	cc -o testStringCell $(objs_testStringCell)
