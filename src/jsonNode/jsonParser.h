@@ -5,7 +5,7 @@
 #	include "../stream/inputStream.h"
 #define
 
-#define JPC_BLANK        100
+#define JPC_BLANKLF      100
 #define JPC_VALUEC       200
 #define JPC_LITERALHEADC 201
 #define JPC_OBJECTSTART  301
@@ -20,8 +20,7 @@
 
 
 int jp_checkCharType(char c);
-void jp_cmpChars(char c, char* cs);
-
+int jp_cmpChars(char c, char* cs);
 char jp_skipBlankLinefeed(INSTREAM* stream);
 
 /* layer 0 */
