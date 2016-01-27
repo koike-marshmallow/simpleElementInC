@@ -14,8 +14,8 @@ INSTREAM* createEmptyInputStream(void);
 int instream_readc(INSTREAM* stream);
 int instream_reads(INSTREAM* stream, char* dst, int len);
 int instream_skip(INSTREAM* stream, int byte);
-void outstream_close(INSTREAM* stream);
-void destroyInputStream();
+void instream_close(INSTREAM* stream);
+void destroyInputStream(INSTREAM* stream);
 
 /* fileoutputstream factory */
 INSTREAM* createFileInputStream(FILE* fp);

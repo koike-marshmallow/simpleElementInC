@@ -41,9 +41,20 @@ int instream_skip(INSTREAM* stream, int byte){
 }
 
 
-void outstream_close(INSTREAM* stream){
+void instream_close(INSTREAM* stream){
 	if( stream != NULL && stream->dest != NULL ){
 		(*(stream->f_close))(stream->dest);
+		stream->dest = NULL;
+	}
+}
+
+
+void destroyInputStream(INSTREAM* stream){
+	if( stream != NULL ){
+		if( stream->dest != NULL ) instream_close(stream);
+
+		memset(stream, 0, sizeof(INSTREAM));
+		free(stream);
 	}
 }
 
