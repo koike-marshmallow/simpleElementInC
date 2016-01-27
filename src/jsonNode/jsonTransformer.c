@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../simpleElement/nodeCore.h"
 #include "../stream/outputStream.h"
 #include "../error/error.h"
@@ -16,6 +17,10 @@
 #define SPRINTF_ASSERT(ret, limit, fnc) \
 	ifassert((ret >= limit), fnc, "VALUEバッファがオーバーフローしました")
 
+#define STREAM_WRITES(stream, str) \
+	outstream_writes(stream, str)
+#define STREAM_WRITEC(stream, c) outstream_writec(stream, c)
+
 int JT_INDENT = 0;
 int JT_LINEFEED = 0;
 char* JT_INDENT_CHAR = "  ";
@@ -27,7 +32,7 @@ void jtIndent(OUTSTREAM* dst, int level){
 	int i;
 	if( JT_INDENT ){
 		for( i=0; i<level; i++){
-			outstream_writes(dst, JT_INDENT_CHAR);
+			STREAM_WRITES(dst, JT_INDENT_CHAR);
 		}
 	}
 }
@@ -35,7 +40,7 @@ void jtIndent(OUTSTREAM* dst, int level){
 
 void jtLinefeed(OUTSTREAM* dst){
 	if( JT_LINEFEED ){
-		outstream_writec(dst, '\n');
+		STREAM_WRITEC(dst, '\n');
 	}
 }
 
@@ -50,30 +55,30 @@ void jt_transformValueNode(OUTSTREAM* dst, NODE* val_node, int level){
 	data = jnodeGetJsonData(val_node);
 	switch( jdataGetType(data) ){
 	case JDTYPE_NULL:
-		outstream_writes(dst, "null");
+		STREAM_WRITES(dst, "null");
 		break;
 	case JDTYPE_INTEGER:
 		SPRINTF_ASSERT(
 			snprintf(JT_VALUE_BUFFER, VALUEBUF_LEN, "%d", jdataGetInt(data)),
 			VALUEBUF_LEN, "jt_transformValueNode"
 		);
-		outstream_writes(dst, JT_VALUE_BUFFER);
+		STREAM_WRITES(dst, JT_VALUE_BUFFER);
 		break;
 	case JDTYPE_FLOAT:
 		SPRINTF_ASSERT(
 			snprintf(JT_VALUE_BUFFER, VALUEBUF_LEN, "%f", jdataGetFloat(data)),
 			VALUEBUF_LEN, "jt_transformValueNode"
 		);
-		outstream_writes(dst, JT_VALUE_BUFFER);
+		STREAM_WRITES(dst, JT_VALUE_BUFFER);
 		break;
 	case JDTYPE_STRING:
-		outstream_writes(dst, "\"");
-		outstream_writes(dst, jdataGetString(data));
-		outstream_writes(dst, "\"");
+		STREAM_WRITES(dst, "\"");
+		STREAM_WRITES(dst, jdataGetString(data));
+		STREAM_WRITES(dst, "\"");
 		break;
 	case JDTYPE_BOOLEAN:
-		if( jdataGetBool(data) ) outstream_writes(dst, "true");
-		else outstream_writes(dst, "false");
+		if( jdataGetBool(data) ) STREAM_WRITES(dst, "true");
+		else STREAM_WRITES(dst, "false");
 		break;
 	default:
 		fnerror("jt_transformValueNode", "不正なVALUEノードが検出されました");
@@ -87,9 +92,9 @@ void jt_transformNameNode(OUTSTREAM* dst, NODE* name_node, int level){
 	ifassert(!checkJsonNodeType(name_node, JNODE_NAMENODE),
 		"jt_transformNameNode", "NAMEノードではありません");
 	
-	outstream_writes(dst, "\"");
-	outstream_writes(dst, jobjectGetMemberName(name_node));
-	outstream_writes(dst, "\": ");
+	STREAM_WRITES(dst, "\"");
+	STREAM_WRITES(dst, jobjectGetMemberName(name_node));
+	STREAM_WRITES(dst, "\": ");
 	
 	jt_transformDataNode(dst, jobjectGetMemberData(name_node), level);
 }
@@ -102,7 +107,7 @@ void jt_transformArray(OUTSTREAM* dst, NODE* ary_node, int level){
 	ifassert(!checkJsonNodeType(ary_node, JNODE_ARRAY),
 		"jt_transformArray", "ARRAYノードではありません");
 	
-	outstream_writes(dst, "[");
+	STREAM_WRITES(dst, "[");
 	jtLinefeed(dst);
 	jtIndent(dst, level+1);
 	comma = FALSE;
@@ -110,7 +115,7 @@ void jt_transformArray(OUTSTREAM* dst, NODE* ary_node, int level){
 	np != NULL;
 	np = jsonMemberIteratorNext(np) ){
 		if( comma ){
-			outstream_writes(dst, ", ");
+			STREAM_WRITES(dst, ", ");
 			jtLinefeed(dst);
 			jtIndent(dst, level+1);
 		}
@@ -119,7 +124,7 @@ void jt_transformArray(OUTSTREAM* dst, NODE* ary_node, int level){
 	}
 	jtLinefeed(dst);
 	jtIndent(dst, level);
-	outstream_writes(dst, "]");
+	STREAM_WRITES(dst, "]");
 }
 
 
@@ -130,7 +135,7 @@ void jt_transformObject(OUTSTREAM* dst, NODE* obj_node, int level){
 	ifassert(!checkJsonNodeType(obj_node, JNODE_OBJECT),
 		"jt_transformObject", "OBJECTノードではありません");
 	
-	outstream_writes(dst, "{");
+	STREAM_WRITES(dst, "{");
 	jtLinefeed(dst);
 	jtIndent(dst, level+1);
 	comma = FALSE;
@@ -138,7 +143,7 @@ void jt_transformObject(OUTSTREAM* dst, NODE* obj_node, int level){
 	np != NULL;
 	np = jsonMemberIteratorNext(np) ){
 		if( comma ){
-			outstream_writes(dst, ", ");
+			STREAM_WRITES(dst, ", ");
 			jtLinefeed(dst);
 			jtIndent(dst, level+1);
 		}
@@ -151,7 +156,7 @@ void jt_transformObject(OUTSTREAM* dst, NODE* obj_node, int level){
 	}
 	jtLinefeed(dst);
 	jtIndent(dst, level);
-	outstream_writes(dst, "}");
+	STREAM_WRITES(dst, "}");
 }
 
 
@@ -172,7 +177,7 @@ void jt_transformDataNode(OUTSTREAM* dst, NODE* j_node, int level){
 		jt_transformObject(dst, j_node, level);
 		break;
 	case JNODE_NULL:
-		outstream_writes(dst, "null");
+		STREAM_WRITES(dst, "null");
 		break;
 	}
 }
