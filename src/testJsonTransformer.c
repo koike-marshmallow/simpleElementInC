@@ -2,13 +2,13 @@
 #include "jsonNode/jsonNode.h"
 #include "jsonNode/jsonObject.h"
 #include "jsonNode/jsonTransformer.h"
-#include "stringBuffer/stringBuffer.h"
+#include "outputStream/outputStream.h"
 
 int main(void){
 	NODE *obj0;
 	NODE *obj1;
 	NODE *ary1, *ary2;
-	STRBUF* strb;
+	OUTSTREAM* stream;
 	FILE* fp;
 	
 	obj0 = createJsonObject();
@@ -25,16 +25,11 @@ int main(void){
 	jarrayAppend(ary2, JN_BOOLEAN(TRUE));
 	jarrayAppend(ary2, JN_STRING("bar"));
 	
-	strb = createStringBuffer(4096);
+	stream = createFileOutputStream(fopen("output.json", "w"));
 	JT_LINEFEED = 1;
 	JT_INDENT = 1;
-	transformJson(strb, obj0);
-	printStringBufferInfo(strb);
-	
-	if( (fp = fopen("output.json", "w")) != NULL ){
-		fprintf(fp, "%s", sbGetString(strb, NULL, 0));
-		fclose(fp);
-	}
+	transformJson(stream, obj0);
+	printf("\n");
 	
 	destroyJsonNodeTree(obj0);
 	
