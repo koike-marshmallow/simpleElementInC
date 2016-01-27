@@ -14,6 +14,15 @@ INSTREAM* createEmptyInputStream(void){
 }
 
 
+int instream_read(INSTREAM* stream, char* dst, int len){
+	if( stream != NULL && stream->dest != NULL ){
+		return (*(stream->f_read))(stream->dest, dst, len);
+	}else{
+		return EOF;
+	}
+}
+
+
 int instream_readc(INSTREAM* stream){
 	if( stream != NULL && stream->dest != NULL ){
 		return (*(stream->f_read_c))(stream->dest);
@@ -69,6 +78,7 @@ INSTREAM* createFileInputStream(FILE* fp){
 	if( new_stream == NULL ) return NULL;
 
 	new_stream->dest = fp;
+	new_stream->f_read = is_fileis_read;
 	new_stream->f_read_c = is_fileis_readc;
 	new_stream->f_read_s = is_fileis_reads;
 	new_stream->f_skip = is_fileis_skip;
@@ -78,16 +88,7 @@ INSTREAM* createFileInputStream(FILE* fp){
 }
 
 
-int is_fileis_readc(void* fp){
-	if( fp != NULL ){
-		return fgetc((FILE*)fp);
-	}else{
-		return EOF;
-	}
-}
-
-
-int is_fileis_reads(void* fp, char* dst, int len){
+int is_fileis_read(void* fp, char* dst, int len){
 	char *cp;
 	int tmp, cnt;
 
@@ -104,6 +105,27 @@ int is_fileis_reads(void* fp, char* dst, int len){
 		}else{
 			return EOF;
 		}
+	}else{
+		return EOF;
+	}
+}
+
+
+int is_fileis_readc(void* fp){
+	if( fp != NULL ){
+		return fgetc((FILE*)fp);
+	}else{
+		return EOF;
+	}
+}
+
+
+int is_fileis_reads(void* fp, char* str, int len){
+	char* ret;
+	if( fp != NULL ){
+		ret = fgets(str, len, (FILE*)fp);
+		if( ret == NULL ) return EOF;
+		return strlen(ret);
 	}else{
 		return EOF;
 	}

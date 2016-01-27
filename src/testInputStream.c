@@ -15,7 +15,7 @@ void testStream(INSTREAM* stream){
 	ASSERT_EOF(tmp, "readc");
 	fputc(tmp, stdout);
 
-	tmp = instream_reads(stream, buffer, BUFFER_LEN - 1);
+	tmp = instream_read(stream, buffer, BUFFER_LEN - 1);
 	ASSERT_EOF(tmp, "reads");
 	buffer[tmp] = '\0';
 	printf("[%d] %s\n", tmp, buffer);
@@ -24,8 +24,15 @@ void testStream(INSTREAM* stream){
 }
 
 int main(void){
+	int c; char buf[BUFFER_LEN];
+
 	testStream(createFileInputStream(stdin));
 	printf("next\n");
 	testStream(createFileInputStream(fopen("output.txt", "r")));
+
+	while( (c = instream_reads(createFileInputStream(stdin), buf, BUFFER_LEN)) != EOF ){
+		printf("[%d]%s\n", c, buf);
+		fflush(stdout);
+	}
 	return 0;
 }
