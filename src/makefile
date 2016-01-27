@@ -30,6 +30,8 @@ src_stringCell_c = stringCell/stringCell.c
 
 src_outputStream_h = stream/outputStream.h
 src_outputStream_c = stream/outputStream.c
+src_inputStream_h = stream/inputStream.h
+src_inputStream_c = stream/inputStream.c
 
 
 ## module rules
@@ -61,6 +63,8 @@ stringCell.o : $(src_error_h) $(src_stringCell_h) $(src_stringCell_c)
 
 outputStream.o : $(src_outputStream_h) $(src_outputStream_c)
 	cc -c $(src_outputStream_c)
+inputStream.o : $(src_inputStream_h) $(src_inputStream_c)
+	cc -c $(src_inputStream_c)
 
 
 testSimpleNode.o : $(src_nodeCore_h) $(src_nodeIterator_h) $(src_simpleNode_h) testSimpleNode.c
@@ -117,3 +121,8 @@ testOutputStream.o : $(src_outputStream_h) testOutputStream.c
 objs_testOutputStream = outputStream.o testOutputStream.o
 testOutputStream : $(objs_testOutputStream)
 	cc -o testOutputStream $(objs_testOutputStream)
+testInputStream.o : $(src_inputStream_h) testInputStream.c
+	cc -c testInputStream.c
+objs_testInputStream = inputStream.o testInputStream.o
+testInputStream : $(objs_testInputStream)
+	cc -o testInputStream $(objs_testInputStream) 
