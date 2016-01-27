@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../simpleElement/nodeCore.h"
-#include "../outputStream/outputStream.h"
+#include "../stream/outputStream.h"
 #include "../error/error.h"
 #include "jsonData.h"
 #include "jsonNode.h"

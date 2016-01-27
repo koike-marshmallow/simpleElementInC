@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "outputStream/outputStream.h"
+#include "stream/outputStream.h"
 
 
 int main(void){

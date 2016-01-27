@@ -2,7 +2,7 @@
 #define JSONTRANSFORMER_H
 
 #ifndef OUTPUTSTREAM_H
-#	include "../outputStream/outputStream.h"
+#	include "../stream/outputStream.h"
 #endif
 
 #ifndef NODECORE_H

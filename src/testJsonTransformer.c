@@ -2,7 +2,7 @@
 #include "jsonNode/jsonNode.h"
 #include "jsonNode/jsonObject.h"
 #include "jsonNode/jsonTransformer.h"
-#include "outputStream/outputStream.h"
+#include "stream/outputStream.h"
 
 int main(void){
 	NODE *obj0;

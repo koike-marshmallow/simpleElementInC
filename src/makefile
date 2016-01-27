@@ -28,8 +28,8 @@ src_jsonTransformer_c = jsonNode/jsonTransformer.c
 src_stringCell_h = stringCell/stringCell.h
 src_stringCell_c = stringCell/stringCell.c
 
-src_outputStream_h = outputStream/outputStream.h
-src_outputStream_c = outputStream/outputStream.c
+src_outputStream_h = stream/outputStream.h
+src_outputStream_c = stream/outputStream.c
 
 
 ## module rules
