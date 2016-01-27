@@ -93,7 +93,7 @@ char* strcel_sitr_set(SC_SIMPLEITR* itr, STRCELL* head, int spos){
 	itr->pos = 0;
 
 	if( spos < head->cblen ){
-		itr->pos = 0;
+		itr->pos = spos;
 	}else{
 		return NULL;
 	}
@@ -184,8 +184,11 @@ void strcel_resize(STRCELL* cell, int length){
 	int remain;
 	STRCELL* cellp;
 	NULL_CHECK(cell, "strcel_resize");
+	ifassert((length <= 0),
+		"strcel_resize", "illigal length value");
 
 	remain = length;
+	cellp = cell;
 	while( remain > cellp->cblen ){
 		remain = remain - cellp->cblen;
 
@@ -321,21 +324,20 @@ void strcel_dumpStringCell(STRCELL* cell, FILE* dst){
 	int i;
 	NULL_CHECK(cell, "strcel_dumpStringCell");
 
-	fprintf(dst, "  CELL_ADDR: %p\n", cell);
-	fprintf(dst, "  CAPASITY : %d\n", cell->cblen);
-	fprintf(dst, "  NEXT_CELL: %p\n", cell->next);
+	fprintf(dst, "  <addr: %p, capasity: %d, next: %p>\n",
+		cell, cell->cblen, cell->next);
 
-	fprintf(dst, "  EXPRESSION -----\n    ");
+	fprintf(dst, "  EXPR [");
 	for( i=0; i<(cell->cblen); i++){
-		if( *(cell->cb + i) == '\0' ) break;
-		fputc(*(cell->cb + i), dst);
+		if( *(cell->cb + i) == '\0' ) fputc(' ', dst);
+		else fputc(*(cell->cb + i), dst);
 	}
-	fprintf(dst, "\n");
+	fprintf(dst, "]\n");
 
-	fprintf(dst, "  DUMP_BUFFER -----");
+	fprintf(dst, "  DUMP ");
 	for( i=0; i<(cell->cblen); i++){
-		if( (i % DUMP_LF) == 0 && i != (cell->cblen - 1))
-			fprintf(dst, "\n    ");
+		if( (i % DUMP_LF) == 0 && i != (cell->cblen - 1) && i != 0 )
+			fprintf(dst, "\n       ");
 		fprintf(dst, "%02x ", *(cell->cb + i));
 	}
 	printf("\n");
@@ -343,13 +345,23 @@ void strcel_dumpStringCell(STRCELL* cell, FILE* dst){
 
 
 void strcel_dumpStringCells(STRCELL* cell, FILE* dst){
+	int i, cnt;
 	STRCELL* cp;
 	NULL_CHECK(cell, "strcel_dumpStringCells");
 
 	cp = cell;
+	cnt = 0;
+	while( cp != NULL){
+		cnt++;
+		cp = cp->next;
+	}
+
+	cp = cell;
+	i = 0;
 	while( cp != NULL ){
-		fprintf(dst, "----------\n");
+		fprintf(dst, "--(dump: %d/%d)--------\n", ++i, cnt);
 		strcel_dumpStringCell(cp, dst);
 		cp = cp->next;
 	}
+	printf("---------- (terminated)\n");
 }
