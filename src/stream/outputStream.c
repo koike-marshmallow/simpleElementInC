@@ -23,9 +23,9 @@ int outstream_writec(OUTSTREAM* stream, char c){
 }
 
 
-int outstream_writes(OUTSTREAM* stream, char* str){
+int outstream_writes(OUTSTREAM* stream, char* sh, int len){
 	if( stream != NULL && stream->dest != NULL ){
-		return (*(stream->f_write_s))(stream->dest, str);
+		return (*(stream->f_write_s))(stream->dest, sh, len);
 	}else{
 		return OUTPUT_FAILED;
 	}
@@ -76,9 +76,9 @@ int os_fileos_writec(void* fp, char c){
 }
 
 
-int os_fileos_writes(void* fp, char* s){
+int os_fileos_writes(void* fp, char* s, int len){
 	if( fp != NULL ){
-		return fputs(s, (FILE*)fp);
+		return fwrite(s, sizeof(char), len, (FILE*)fp);
 	}else{
 		return OUTPUT_FAILED;
 	}
