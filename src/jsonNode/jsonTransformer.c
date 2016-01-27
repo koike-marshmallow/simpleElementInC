@@ -18,7 +18,7 @@
 	ifassert((ret >= limit), fnc, "VALUEバッファがオーバーフローしました")
 
 #define STREAM_WRITES(stream, str) \
-	outstream_writes(stream, str, strlen(str))
+	outstream_writes(stream, str)
 #define STREAM_WRITEC(stream, c) outstream_writec(stream, c)
 
 int JT_INDENT = 0;

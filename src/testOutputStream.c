@@ -11,7 +11,8 @@ int main(void){
 
 	outstream_writec(stream, '8');
 	outstream_writec(stream, '\n');
-	outstream_writes(stream, str, strlen(str));
+	outstream_write(stream, str, strlen(str));
+	outstream_writes(stream, "ogiuj");
 
 	destroyOutputStream(stream);
 

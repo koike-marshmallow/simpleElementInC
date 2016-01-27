@@ -14,6 +14,15 @@ OUTSTREAM* createEmptyOutputStream(void){
 }
 
 
+int outstream_write(OUTSTREAM* stream, char* p, int len){
+	if( stream != NULL && stream->dest != NULL ){
+		return (*(stream->f_write))(stream->dest, p, len);
+	}else{
+		return OUTPUT_FAILED;
+	}
+}
+
+
 int outstream_writec(OUTSTREAM* stream, char c){
 	if( stream != NULL && stream->dest != NULL ){
 		return (*(stream->f_write_c))(stream->dest, c);
@@ -23,9 +32,9 @@ int outstream_writec(OUTSTREAM* stream, char c){
 }
 
 
-int outstream_writes(OUTSTREAM* stream, char* sh, int len){
+int outstream_writes(OUTSTREAM* stream, char* str){
 	if( stream != NULL && stream->dest != NULL ){
-		return (*(stream->f_write_s))(stream->dest, sh, len);
+		return (*(stream->f_write_s))(stream->dest, str);
 	}else{
 		return OUTPUT_FAILED;
 	}
@@ -59,11 +68,21 @@ OUTSTREAM* createFileOutputStream(FILE* fp){
 	if( new_stream == NULL || fp == NULL ) return NULL;
 
 	new_stream->dest = fp;
+	new_stream->f_write = os_fileos_write;
 	new_stream->f_write_c = os_fileos_writec;
 	new_stream->f_write_s = os_fileos_writes;
 	new_stream->f_close = os_fileos_close;
 
 	return new_stream;
+}
+
+
+int os_fileos_write(void* fp, char* p, int len){
+	if( fp != NULL ){
+		return fwrite(p, sizeof(char), len, (FILE*)fp);
+	}else{
+		return OUTPUT_FAILED;
+	}
 }
 
 
@@ -76,9 +95,9 @@ int os_fileos_writec(void* fp, char c){
 }
 
 
-int os_fileos_writes(void* fp, char* s, int len){
+int os_fileos_writes(void* fp, char* str){
 	if( fp != NULL ){
-		return fwrite(s, sizeof(char), len, (FILE*)fp);
+		return fputs(str, (FILE*)fp);
 	}else{
 		return OUTPUT_FAILED;
 	}
