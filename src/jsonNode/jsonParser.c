@@ -18,6 +18,7 @@
 	ifassert((jp_checkCharType(c) == JPC_NULLEOF), \
 	fnc, "ストリームが終端に達しました")
 #define STREAM_READC(stream) instream_readc(stream)
+#define STREAM_READC_SB(stream) jp_skiptBlankLinefeed(stream)
 #define CHARTYPE(c) jp_checkCharType(c)
 #define COND_BLK(c) (c == JPC_BLANKLF)
 #define COND_EOF(c) (c == JPC_NULLEOF)
@@ -193,4 +194,42 @@ NODE* jp_parseString(INSTREAM* stream, char *ptr){
 	ASSERT_NULL(str_node,
 		"jp_parseString", "ノードを生成できません");
 	return str_node;
+}
+
+
+NODE* jp_parseArray(INSTREAM* stream, char *ptr){
+	NODE* ary_node;
+	if( CHARTYPE(*ptr) != JPC_ARRAYSTRAT ){
+		fnerror("jp_parseArray", "開始が不正です");
+	}
+
+	ary_node = createJsonArray();
+	ASSERT_NULL(ary_node,
+		"jp_parseArray", "ノードを生成できません");
+	while( 1 ){
+		*ptr = STREAM_READC_SB(stream);
+		if( CHARTYPE(*ptr) == JPC_ARRAYEND ) break;
+		switch( CHARTYPE(*ptr) ){
+		case JPC_VALUEC:
+		case JPC_LITERALHEAD:
+		case JPC_OBJECTSTART:
+		case JPC_ARRAYSTART:
+		case JPC_QUOTE:
+			jarrayAppend(jp_parseData(stream, *ptr));
+			break;
+		default:
+			fnerror("jp_parseArray", "未定義の文字列です");
+			break;
+		}
+
+		*ptr = STREAM_READC_SB(stream);
+		if( CHARTYPE(*ptr) == JPC_ARRAYEND ){
+			break;
+		}else if( CHARTYPE(*ptr) != JPC_QUOTE ){
+			fnerror("jp_parseArray", "データの開始が不正です");
+			break;
+		}
+	}
+
+	return ary_node;
 }
